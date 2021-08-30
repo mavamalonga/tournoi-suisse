@@ -22,9 +22,13 @@ class Tournoi:
 
 
 class Player:
-	def __init__(self, name, firstname, birthday, 
-		gender, ranking):
-		db = TinyDB("Player.json")
+	def __init__(self):
+		pass
+
+	def create_database_player(self):
+		self.db = TinyDB("Player.json")
+
+	def create_player(self, name, firstname, birthday, gender, ranking):
 		player = {
 			"name":name,
 			"firstname":firstname,
@@ -33,7 +37,7 @@ class Player:
 			"ranking":ranking,
 			"points":0
 		}
-		db.insert(player)
+		self.db.insert(player)
 
 
 class Match:

@@ -2,7 +2,25 @@ from model import Tournoi
 from model import Player
 from model import Match
 
+class View:
+	def __init__(self):
+		pass
+
+	def home_page(self):
+		print("1 : Create a tournament")
+		print("2 : Create a player")
+
+	def form_player(self):
+		name = input("name : ")
+		firstname = input("firstname : ")
+		birthday = input("birthday : ")
+		gender = input("sexe : ")
+		ranking = input("ranking : ")
+		return name, firstname, birthday, gender, ranking
+
+
 def create_player():
+	player = input("")
 	player_1 = Player("Affane", "Jean", "00/07/1997","M", "1")
 	player_2 = Player("Candas", "Ma2t", "00/07/1997","M", "5")
 	player_3 = Player("Ben", "Yass", "00/07/1999","M", "7")
@@ -14,23 +32,5 @@ def create_player():
 	return [player_1.name, player_2.name, player_3.name, 
 		player_4.name, player_5.name, player_6.name, 
 		player_7.name, player_8.name]
-
-def create_tournoi(player_list):
-	t1 = Tournoi("Les petits princes", "Paris 14", 
-		"29/08/2021", "5", "4", player_list, "06:00:00",
-		 "Putains de tournoi")
-	return t1
-
-def create_matchs(player_list):
-	m = Match(player_list)
-	matchs = m.main()
-	print(matchs)
-
-def main():
-	player_list = create_player()
-	t1 = create_tournoi(player_list)
-	create_matchs(player_list)
-
 	
-if __name__ == '__main__':
-	main()
+	
