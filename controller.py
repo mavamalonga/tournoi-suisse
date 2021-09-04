@@ -8,6 +8,14 @@ class Controller(View, Player):
 		View.__init__(self)
 		Player.__init__(self)
 
+	def check_path(self, page_index, path):
+		error_404 = "page not found"
+		if page_index == "1":
+			if path in ["1", "2", "3", "4"]:
+				return True
+			else:
+				return error_404
+
 	def check_form_add_tournement(self, tournement):
 		print(tournement)
 
@@ -48,26 +56,32 @@ class Controller(View, Player):
 
 		if len(error_list) == 0:
 			Player.add_player(self, player[0], player[1], player[2], player[3])
+			return False
 		else:
 			View.error(self, error_list)
+			return True
 			
 	def main(self):
-		var = 0
-		self.controller_page()
+		choice = self.controller_page()
 		page_index = "1"
 
 		while True:
-			if var == 'q':
+			if choice == 'q':
 				quit()
 			elif page_index[0] == "1":
-				if var == "1":
+				if choice == "1":
 					tournement = View.form_add_tournement(self)
 					self.check_form_add_tournement(tournement)
-				elif var == "2":
-					player = View.form_add_player(self)
-					self.check_form_add_player(player)
-
-			var = input("Response : ")
+				elif choice == "2":
+					add_again = "yes"
+					while add_again == "yes":
+						player = View.form_add_player(self)
+						self.check_form_add_player(player)
+						add_again = input("Add again ? yes/not : ")
+					self.controller_page()
+				elif choice == "3":
+					View.read_reports(self)
+			choice = input("Response : ")
 
 if __name__ == '__main__':
 	controller = Controller()

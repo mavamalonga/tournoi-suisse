@@ -13,6 +13,11 @@ class View:
 		4 : Settings \n \
 		q : quit "
 		print(text_controller_page)
+		choice = input("Response : ")
+		if choice == 'q':
+			quit()
+		else:
+			return choice
 
 	def form_add_tournement(self):
 		print("#"*15 + " form create tournement")
@@ -36,6 +41,17 @@ class View:
 		gender = input("		gender : ")
 		#ranking = input("		ranking : ")
 		return [name, firstname, birthday, gender]
+
+	def read_reports(self):
+		print("#"*15 + " Read reports")
+		text_read_reports = "\n \
+		1 : List of all actors\n \
+		2 : List of all players in a tournament \n \
+		3 : List of all tournaments \n \
+		4 : Liste de tous les tours d'un tournoi \n \
+		5 : List of all matches in a tournament \n \
+		q : quit "
+		print(text_read_reports)
 
 	def error(self, error_list):
 		print("\n \
