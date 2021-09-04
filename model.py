@@ -1,57 +1,77 @@
 from tinydb import TinyDB, Query
 
-class Tournoi:
-
- 	def __init__(self, name, place, date, nb_rounds, tournees,
- 		players, time, description):
- 		self.db = TinyDB('Tournoi.json')
- 		tournoi = { 
- 			"name": name,
- 			"place": place,
- 			"date": date,
- 			"nb_rounds": nb_rounds,
- 			"tournees": tournees,
- 			"players": players,
- 			"time": time,
- 			"description": description
- 		}
- 		self.db.insert(tournoi)
-
- 	def create_tournoi(self):
- 		self.db.insert(tournoi)
-
-
-class Player:
+class Database:
 	def __init__(self):
-		pass
+		self.db = TinyDB('db.json')
+		self.tournament_table = self.db.table('Tournament')
+		self.player_table = self.db.table('Player')
+		self.match_table = self.db.table('Match')
+		self.rounds_table = self.db.table('Rounds')
 
-	def create_database_player(self):
-		self.db = TinyDB("Player.json")
+	def add_tournament(self, data):
+		self.tournament_table.insert(data)
 
-	def create_player(self, name, firstname, birthday, gender, ranking):
-		player = {
-			"name":name,
-			"firstname":firstname,
-			"birthday":birthday,
-			"gender":gender,
-			"ranking":ranking,
-			"points":0
+	def add_player(self, data):
+		self.player_table.insert(data)
+
+	def add_match(self, data):
+		self.match_table.insert(data)
+
+	def add_rounds(self, data):
+		self.rounds_table.insert(data)
+
+class Tournement:
+	def __init__(self):
+		Database.__init__(self)
+
+	def add_tournement(self, name, place, date, number_of_turns, 
+		players, time_control, description):
+		Tournement = {
+			"name": name,
+			"place": place,
+			"date": date,
+			"number_of_turns": number_of_turns,
+			"rounds": "empty",
+			"players": players,
+			"time_control": time_control,
+			"description": description
 		}
-		self.db.insert(player)
+		Database.add_tournament(Tournement)
 
+
+class Player(Database):
+	def __init__(self):
+		Database.__init__(self)
+
+	def add_player(self, name, firstname, birthday, gender, ranking):
+		Player = {
+			"name": name,
+			"firstname": firstname,
+			"birthday":birthday,
+			"gender": gender,
+			"ranking": ranking
+		}
+		Database.add_player(self, Player)
 
 class Match:
-	def __init__(self, player_list):
-		self.number = "1"
-		self.player_list = player_list
-		self.matchs = []
+	def __init__(self):
+		Database.__init__(self)
 
-	def random_draw(self):
-		for player_one, player_two in zip(self.player_list[0:4], 
-			self.player_list[4:8]):
-			self.matchs.append((player_one, player_two))
+	def add_match(self, player1, player2):
+		Match = {
+			"player1": [player1, score1],
+			"player2": [player2, score2]
+		}
+		Database.add_Match(self, Match)
 
-	def main(self):
-		self.random_draw()
-		return self.matchs
 
+class Rounds:
+	def __init__(self):
+		Database.__init__(self)
+
+	def add_rounds(self, name, matchs):
+		Round = {
+			"name": name,
+			"matchs": matchs
+		}
+		Database.add_round(self, Round)
