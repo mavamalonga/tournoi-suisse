@@ -13,11 +13,11 @@ class Controller(View, Player):
 
 	def check_form_add_player(self, player):
 		error_list = []
-		if len(player[0]) < 2 or len(player[0] > 16):
+		if len(player[0]) < 2 or len(player[0]) > 16:
 			name_error = "		- the name must contain between 2 to 16 characters."
 			error_list.append(name_error)
 
-		if len(player[0]) < 2 or len(player[0] > 16):
+		if len(player[0]) < 2 or len(player[0]) > 16:
 			firstname_error = "		- the firstname must contain between 2 to 16 characters."
 			error_list.append(firstname_error)
 
@@ -42,11 +42,14 @@ class Controller(View, Player):
 			gender_error = "		- the gender field takes only one character."
 			error_list.append(gender_error)
 		else:
-			if player[3] != 'M' or player[0] != 'F':
+			if player[3] != 'M' and player[3] != 'F':
 				gender_error = "		- the gender field only takes the value 'M' or 'F'."
 				error_list.append(gender_error)
 
-		View.error(self, error_list)
+		if len(error_list) == 0:
+			Player.add_player(self, player[0], player[1], player[2], player[3])
+		else:
+			View.error(self, error_list)
 			
 	def main(self):
 		var = 0

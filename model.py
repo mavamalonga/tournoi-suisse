@@ -43,13 +43,13 @@ class Player(Database):
 	def __init__(self):
 		Database.__init__(self)
 
-	def add_player(self, name, firstname, birthday, gender, ranking):
+	def add_player(self, name, firstname, birthday, gender):
 		Player = {
 			"name": name,
 			"firstname": firstname,
 			"birthday":birthday,
 			"gender": gender,
-			"ranking": ranking
+			"ranking": "NA"
 		}
 		Database.add_player(self, Player)
 
