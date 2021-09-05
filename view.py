@@ -2,10 +2,13 @@ from model import Player
 
 class View:
 	def __init__(self):
-		pass
+		self.error_404 = "		page not found"
 
-	def controller_page(self):
+	def controller_page(self, error_404=False):
+		page = "1"
 		print("#"*15 + " controller page")
+		if error_404:
+			self.error([self.error_404])
 		text_controller_page = "\n \
 		1 : Create new tournement \n \
 		2 : Add new player in database \n \
@@ -13,12 +16,7 @@ class View:
 		4 : Settings \n \
 		q : quit "
 		print(text_controller_page)
-		choice = input("Response : ")
-		if choice == 'q':
-			quit()
-		else:
-			return choice
-
+		
 	def form_add_tournement(self):
 		print("#"*15 + " form create tournement")
 		name = input("		name : ")
@@ -55,7 +53,7 @@ class View:
 
 	def error(self, error_list):
 		print("\n \
-		ERROR WHEN ENTERING IT.")
+		ERROR")
 		for error in error_list:
 			print(error)
 		print("\n \

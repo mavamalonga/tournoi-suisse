@@ -8,13 +8,17 @@ class Controller(View, Player):
 		View.__init__(self)
 		Player.__init__(self)
 
-	def check_path(self, page_index, path):
-		error_404 = "page not found"
-		if page_index == "1":
-			if path in ["1", "2", "3", "4"]:
+	def check_next(self, page, next_page):
+		if page == "1":
+			if next_page in ["1", "2", "3", "4"]:
 				return True
 			else:
-				return error_404
+				return False
+		if page == "13":
+			if next_page in ["1", "2", "3", "4", "5"]:
+				return True
+			else:
+				return False
 
 	def check_form_add_tournement(self, tournement):
 		print(tournement)
@@ -62,26 +66,46 @@ class Controller(View, Player):
 			return True
 			
 	def main(self):
-		choice = self.controller_page()
-		page_index = "1"
-
+		page = "1"
+		self.controller_page()
 		while True:
-			if choice == 'q':
+			next_page = input("Response : ")
+			if next_page == "q":
 				quit()
-			elif page_index[0] == "1":
-				if choice == "1":
-					tournement = View.form_add_tournement(self)
-					self.check_form_add_tournement(tournement)
-				elif choice == "2":
-					add_again = "yes"
-					while add_again == "yes":
-						player = View.form_add_player(self)
-						self.check_form_add_player(player)
-						add_again = input("Add again ? yes/not : ")
-					self.controller_page()
-				elif choice == "3":
-					View.read_reports(self)
-			choice = input("Response : ")
+			elif page == "1":
+				validator = self.check_next(page, next_page)
+				if validator:
+					if next_page == "1":
+						tournement = View.form_add_tournement(self)
+						self.check_form_add_tournement(tournement)
+					elif next_page == "2":
+						add_again = "yes"
+						while add_again == "yes":
+							player = View.form_add_player(self)
+							self.check_form_add_player(player)
+							add_again = input("Add again ? yes/not : ")
+							self.controller_page()
+					elif next_page == "3":
+						page = page + next_page
+						View.read_reports(self)
+				else:
+					self.controller_page(error_404=True)
+			elif page == "13":
+				validator = self.check_next(page, next_page)
+				if validator:
+					if next_page == "1":
+						players = Player.select_players(self)
+						print(players)
+					elif next_page == "2":
+						pass
+					elif next_page == "3":
+						pass
+					elif next_page == "4":
+						pass
+					elif next_page == "5":
+						pass
+
+		
 
 if __name__ == '__main__':
 	controller = Controller()

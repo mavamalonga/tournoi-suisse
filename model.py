@@ -20,6 +20,10 @@ class Database:
 	def add_rounds(self, data):
 		self.rounds_table.insert(data)
 
+	def select_players(self):
+		players = self.player_table.all()
+		return players
+
 class Tournement:
 	def __init__(self):
 		Database.__init__(self)
@@ -52,6 +56,11 @@ class Player(Database):
 			"ranking": "NA"
 		}
 		Database.add_player(self, Player)
+
+	def select_players(self):
+		players = Database.player_table.all()
+		return players
+
 
 class Match:
 	def __init__(self):
