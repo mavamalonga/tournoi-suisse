@@ -94,8 +94,9 @@ class Controller(View, Player):
 				validator = self.check_next(page, next_page)
 				if validator:
 					if next_page == "1":
+						page = page + next_page
 						players = Player.select_players(self)
-						print(players)
+						View.display_players(self, players)
 					elif next_page == "2":
 						pass
 					elif next_page == "3":

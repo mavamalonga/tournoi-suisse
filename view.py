@@ -51,6 +51,11 @@ class View:
 		q : quit "
 		print(text_read_reports)
 
+	def display_players(self, players):
+		print("#"*15 + " List of all actors")
+		for player in players:
+			print("		" + player["name"]+" "+player["firstname"])
+
 	def error(self, error_list):
 		print("\n \
 		ERROR")

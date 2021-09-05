@@ -58,8 +58,9 @@ class Player(Database):
 		Database.add_player(self, Player)
 
 	def select_players(self):
-		players = Database.player_table.all()
+		players = Database.select_players(self)
 		return players
+		
 
 
 class Match:
