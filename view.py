@@ -1,4 +1,4 @@
-from model import Player
+from model import Database
 
 class View:
 	def __init__(self):
@@ -43,7 +43,7 @@ class View:
 	def read_reports(self):
 		print("#"*15 + " Read reports")
 		text_read_reports = "\n \
-		1 : List of all actors\n \
+		1 : List of all players\n \
 		2 : List of all players in a tournament \n \
 		3 : List of all tournaments \n \
 		4 : Liste de tous les tours d'un tournoi \n \
@@ -52,9 +52,11 @@ class View:
 		print(text_read_reports)
 
 	def display_players(self, players):
-		print("#"*15 + " List of all actors")
+		print("#"*15 + " List of all players \n")
+		print(" "*15 + " Ranking" +" "+"Name"+" "+"Firstname"+" "+"Gender"+" "+"Birthday")
 		for player in players:
-			print("		" + player["name"]+" "+player["firstname"])
+			print("		" + player["ranking"] +" "+ player["name"]
+				+" "+player["firstname"]+ " "+player["gender"]+" "+player["birthday"])
 
 	def error(self, error_list):
 		print("\n \

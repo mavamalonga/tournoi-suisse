@@ -1,12 +1,12 @@
 from tinydb import TinyDB, Query
-from model import Player
+from model import Database
 from view import View
 import os
 
-class Controller(View, Player):
+class Controller(View, Database):
 	def __init__(self):
 		View.__init__(self)
-		Player.__init__(self)
+		Database.__init__(self)
 
 	def check_next(self, page, next_page):
 		if page == "1":
@@ -59,7 +59,7 @@ class Controller(View, Player):
 				error_list.append(gender_error)
 
 		if len(error_list) == 0:
-			Player.add_player(self, player[0], player[1], player[2], player[3])
+			Database.add_player(self, player[0], player[1], player[2], player[3])
 			return False
 		else:
 			View.error(self, error_list)
@@ -95,7 +95,7 @@ class Controller(View, Player):
 				if validator:
 					if next_page == "1":
 						page = page + next_page
-						players = Player.select_players(self)
+						players = Database.select_players(self)
 						View.display_players(self, players)
 					elif next_page == "2":
 						pass
@@ -105,7 +105,8 @@ class Controller(View, Player):
 						pass
 					elif next_page == "5":
 						pass
-
+			elif page == "131":
+				pass
 		
 
 if __name__ == '__main__':
