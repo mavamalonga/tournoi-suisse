@@ -72,6 +72,12 @@ class View:
 			print("\n \
 		1 : order by name")
 
+	def display_players_for_tournement(self, id_list, players):
+		print("		Add a player by choosing an id")
+		print("		player_Id  Name  Firstname  Gender  Birthday")
+		for player_id, player in zip(id_list,players):
+			print('		{0}  {1}  {2}  {3}'.format(player_id, player["firstname"], player["gender"], player["birthday"]))
+
 	def error(self, error_list):
 		print("\n \
 		ERROR")

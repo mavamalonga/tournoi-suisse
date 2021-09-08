@@ -111,9 +111,6 @@ class Controller(View, Database):
 			View.error(self, error_list)
 			return True
 
-	def generator(self, players_list):
-		pass
-
 
 			
 	def main(self):
@@ -129,10 +126,10 @@ class Controller(View, Database):
 					if next_page == "1":
 						tournement = View.form_add_tournement(self)
 						validator = self.check_form_add_tournement(tournement)
-						print(validator)
 						if validator:
-							print(tournement)
-	
+							players = Database.select_players_for_tournement(self)
+							View.display_players_for_tournement(self, players[0], players[1])
+					
 					elif next_page == "2":
 						add_again = "yes"
 						while add_again == "yes":

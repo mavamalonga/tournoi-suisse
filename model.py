@@ -41,6 +41,13 @@ class Database:
 			players_order = sorted(players, key=lambda k: k['ranking'])
 		return players_order
 
+	def select_players_for_tournement(self):
+		id_list = []
+		players = self.player_table.all()
+		for player in players:
+			id_list.append(player.doc_id)
+		return [id_list, players]
+
 	def select_player_where_id(self, player_id):
 		player = self.player_table.get(doc_id = player_id)
 		return player
