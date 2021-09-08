@@ -19,12 +19,20 @@ class View:
 		
 	def form_add_tournement(self):
 		print("#"*15 + " form create tournement")
+		print("		2 to 16 characters.")
 		name = input("		name : ")
+		print("		66 max characters.")
 		place = input("		place : ")
+		print("		Format dd/mm/yyyy")
 		date = input("		date : ")
+		print("		Integer, defect = 4")
 		nb_of_turns = input("		nb_of_turns : ")
+		print("		bullet, blitz or rapide")
 		control_time = input("		controller_time : ")
+		print("		234 max characters.")
 		description = input("		description : ")
+		# players
+		# rounds
 		return [name, place, date, nb_of_turns, control_time, description]
 
 	def form_add_player(self):
@@ -51,12 +59,18 @@ class View:
 		q : quit "
 		print(text_read_reports)
 
-	def display_players(self, players):
+	def display_players(self, players, order_by_name=True):
 		print("#"*15 + " List of all players \n")
 		print(" "*15 + " Ranking" +" "+"Name"+" "+"Firstname"+" "+"Gender"+" "+"Birthday")
 		for player in players:
 			print("		" + player["ranking"] +" "+ player["name"]
 				+" "+player["firstname"]+ " "+player["gender"]+" "+player["birthday"])
+		if order_by_name == True:
+			print("\n \
+		2 : order by ranking")
+		else:
+			print("\n \
+		1 : order by name")
 
 	def error(self, error_list):
 		print("\n \

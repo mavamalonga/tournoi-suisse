@@ -19,9 +19,55 @@ class Controller(View, Database):
 				return True
 			else:
 				return False
+		if page == "131":
+			if next_page in ["1", "2"]:
+				return True
+			else:
+				return False
 
 	def check_form_add_tournement(self, tournement):
-		print(tournement)
+		error_list = []
+		if len(tournement[0]) < 2 or len(tournement[0]) > 16:
+			name_error = "		- the name must contain between 2 to 16 characters."
+			error_list.append(name_error)
+		if len(tournement[1]) < 8 or len(tournement[1]) > 66:
+			place_error = "		- the place value must contain between 8 to 66 characters."
+			error_list.append(place_error)
+		if len(tournement[2]) != 10:
+			date_error = "		- the date format is incorrect."
+			error_list.append(date_error)
+		else:
+			try:
+				date = tournement[2].split("/")
+				for nb in date:
+					try:
+						int(nb)
+					except Exception as e:
+						date_error = "		- date must only contain integers"
+						error_list.append(date_error)
+			except Exception as e:
+				date_error = "		- the date format is incorrect."
+				error_list.append(date_error)
+
+		try:
+			int(tournement[3])
+		except Exception as e:
+			nb_of_turns = "		- nb of turns must only contain integers"
+			error_list.append(nb_of_turns)
+
+		if tournement[4].lower() != "bullet" and tournement[4].lower() != "blitz" and tournement[4].lower() != "rapide":
+			control_time_error = "		- control time must only contain following values : bullet, blitz, rapide"
+			error_list.append(control_time_error)
+
+		if len(tournement[5]) > 234:
+			description_error = "		- the description value must contain 234 characters."
+			error_list.append(description_error)
+
+		if len(error_list) == 0:
+			return True
+		else:
+			return error_list
+			
 
 	def check_form_add_player(self, player):
 		error_list = []
@@ -64,6 +110,11 @@ class Controller(View, Database):
 		else:
 			View.error(self, error_list)
 			return True
+
+	def generator(self, players_list):
+		pass
+
+
 			
 	def main(self):
 		page = "1"
@@ -77,7 +128,11 @@ class Controller(View, Database):
 				if validator:
 					if next_page == "1":
 						tournement = View.form_add_tournement(self)
-						self.check_form_add_tournement(tournement)
+						validator = self.check_form_add_tournement(tournement)
+						print(validator)
+						if validator:
+							print(tournement)
+	
 					elif next_page == "2":
 						add_again = "yes"
 						while add_again == "yes":
@@ -106,7 +161,16 @@ class Controller(View, Database):
 					elif next_page == "5":
 						pass
 			elif page == "131":
-				pass
+				validator = self.check_next(page, next_page)
+				if validator:
+					if next_page == "1":
+						players = Database.select_players(self)
+						View.display_players(self, players)
+					elif next_page == "2":
+						players = Database.select_players(self, order_by_name=False)
+						View.display_players(self, players, order_by_name=False)
+				else:
+					pass
 		
 
 if __name__ == '__main__':

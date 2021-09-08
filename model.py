@@ -45,10 +45,9 @@ class Database:
 		player = self.player_table.get(doc_id = player_id)
 		return player
 
-	def add_match(self, player1, player2):
+	def add_match(self, player1, ranking1, player2, ranking2):
 		Match = {
-			"player1": [player1, score1],
-			"player2": [player2, score2]
+			"Match": ([player1, ranking1], [player2, ranking2])
 		}
 		self.match_table.insert(Match)
 
