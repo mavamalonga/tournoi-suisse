@@ -48,15 +48,19 @@ class Database:
 			id_list.append(player.doc_id)
 		return [id_list, players]
 
-	def select_player_where_id(self, player_id):
-		player = self.player_table.get(doc_id = player_id)
-		return player
+	def select_player_id(self, player_id_list):
+		player_list = []
+		for player_id in player_id_list:
+			player = self.player_table.get(doc_id = int(player_id))
+			player_list.append(player)
+		return player_list
 
-	def add_match(self, player1, ranking1, player2, ranking2):
+	def add_match(self, player1, player2):
 		Match = {
-			"Match": ([player1, ranking1], [player2, ranking2])
+			"Match": ([player1, 0], [player2, 0])
 		}
-		self.match_table.insert(Match)
+		match_id = self.match_table.insert(Match)
+		return match_id
 
 	def add_rounds(self, name, matchs):
 		Round = {

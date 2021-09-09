@@ -118,7 +118,7 @@ class Controller(View, Database):
 		Ids.replace(' ', '')
 		Id_list = Ids.split(",")
 		if len(Id_list) != 8:
-			Id_error = "		- you need to add 8 players."
+			Id_error = "		- incorrect number of player_id"
 			error_list.append(Id_error)
 		else:
 			for player_id in Id_list:
@@ -126,13 +126,35 @@ class Controller(View, Database):
 					int(player_id)
 					players.append(player_id)
 				except Exception as e:
-					Id_error = "		- player list must only contain integers."
+					Id_error = "		- player_id list must only contain integers."
 					error_list.append(Id_error)
 		
 		if len(error_list) == 0:
-			return players
+			return [True, players]
 		else:
+			View.error(self, error_list)
+			return [False, players]
+
+	def check_player_instance(self, id_list, player_instance):
+		error_list = []
+		for Id, player in zip(id_list, player_instance):
+			if player == None:
+				player_error = "		- there is no player with the following id :{0}".format(Id)
+				error_list.append(player_error)
+		if len(error_list) == 0:
+			return True
+		else:
+			View.error(self, error_list)
 			return False
+
+	def pairing(self, player_instance):
+		part_one = player_instance[:4]
+		part_two = player_instance[4:]
+		match_list = []
+		for player1, player2 in zip(part_one, part_two):
+			match_id = Database.add_match(self, player1, player2)
+			match_list.append(match_id)
+		return match_list
 
 	def main(self):
 		page = "1"
@@ -151,7 +173,18 @@ class Controller(View, Database):
 							players = Database.select_players_for_tournement(self)
 							Id_list = View.display_players_for_tournement(self, players[0], players[1])
 							validator_Id = self.check_player_id(Id_list)
-							print(validator_Id)
+							if validator_Id[0]:
+								player_instances = Database.select_player_id(self, validator_Id[1])
+								validator_instances = self.check_player_instance(validator_Id[1], player_instances)
+								print(validator_instances)
+								if validator_instances:
+									match_list = self.pairing(player_instances)
+									# add rounds 
+								else:
+									pass
+									#
+							else:
+								self.controller_page()
 						else:
 							self.controller_page()
 					elif next_page == "2":
