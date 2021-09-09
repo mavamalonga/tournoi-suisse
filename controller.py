@@ -66,7 +66,8 @@ class Controller(View, Database):
 		if len(error_list) == 0:
 			return True
 		else:
-			return error_list
+			View.error(self, error_list)
+			return False
 			
 
 	def check_form_add_player(self, player):
@@ -111,8 +112,28 @@ class Controller(View, Database):
 			View.error(self, error_list)
 			return True
 
+	def check_player_id(self, Ids):
+		error_list = []
+		players = []
+		Ids.replace(' ', '')
+		Id_list = Ids.split(",")
+		if len(Id_list) != 8:
+			Id_error = "		- you need to add 8 players."
+			error_list.append(Id_error)
+		else:
+			for player_id in Id_list:
+				try:
+					int(player_id)
+					players.append(player_id)
+				except Exception as e:
+					Id_error = "		- player list must only contain integers."
+					error_list.append(Id_error)
+		
+		if len(error_list) == 0:
+			return players
+		else:
+			return False
 
-			
 	def main(self):
 		page = "1"
 		self.controller_page()
@@ -125,17 +146,21 @@ class Controller(View, Database):
 				if validator:
 					if next_page == "1":
 						tournement = View.form_add_tournement(self)
-						validator = self.check_form_add_tournement(tournement)
-						if validator:
+						validator_tournement = self.check_form_add_tournement(tournement)
+						if  validator_tournement == True:
 							players = Database.select_players_for_tournement(self)
-							View.display_players_for_tournement(self, players[0], players[1])
-					
+							Id_list = View.display_players_for_tournement(self, players[0], players[1])
+							validator_Id = self.check_player_id(Id_list)
+							print(validator_Id)
+						else:
+							self.controller_page()
 					elif next_page == "2":
 						add_again = "yes"
 						while add_again == "yes":
 							player = View.form_add_player(self)
 							self.check_form_add_player(player)
 							add_again = input("Add again ? yes/not : ")
+					
 							self.controller_page()
 					elif next_page == "3":
 						page = page + next_page

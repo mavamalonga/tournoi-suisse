@@ -19,17 +19,11 @@ class View:
 		
 	def form_add_tournement(self):
 		print("#"*15 + " form create tournement")
-		print("		2 to 16 characters.")
 		name = input("		name : ")
-		print("		66 max characters.")
 		place = input("		place : ")
-		print("		Format dd/mm/yyyy")
 		date = input("		date : ")
-		print("		Integer, defect = 4")
 		nb_of_turns = input("		nb_of_turns : ")
-		print("		bullet, blitz or rapide")
 		control_time = input("		controller_time : ")
-		print("		234 max characters.")
 		description = input("		description : ")
 		# players
 		# rounds
@@ -37,13 +31,9 @@ class View:
 
 	def form_add_player(self):
 		print("#"*15 + " Form player")
-		print("		2 to 16 characters.")
 		name = input("		name : ")
-		print("		2 to 16 characters.")
 		firstname = input("		firstname : ")
-		print("		Format dd/mm/yyyy")
 		birthday = input("		birthday : ")
-		print("		M/F")
 		gender = input("		gender : ")
 		#ranking = input("		ranking : ")
 		return [name, firstname, birthday, gender]
@@ -73,10 +63,13 @@ class View:
 		1 : order by name")
 
 	def display_players_for_tournement(self, id_list, players):
-		print("		Add a player by choosing an id")
-		print("		player_Id  Name  Firstname  Gender  Birthday")
+		print("		Add players : enter the id of 8 players separated by commas")
+		print("		Id  Firstname  Name  Gender  Birthday")
 		for player_id, player in zip(id_list,players):
-			print('		{0}  {1}  {2}  {3}'.format(player_id, player["firstname"], player["gender"], player["birthday"]))
+			print('		 {0}  {1}  {2}  {3}  {4}'.format(player_id, 
+				player["firstname"], player["name"], player["gender"], player["birthday"]))
+		Id = input("		Choice Id : ")
+		return Id 
 
 	def error(self, error_list):
 		print("\n \
