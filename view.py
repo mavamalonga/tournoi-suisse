@@ -4,7 +4,7 @@ class View:
 	def __init__(self):
 		self.error_404 = "		page not found"
 
-	def controller_page(self, error_404=False):
+	def home_page(self, error_404=False):
 		page = "1"
 		print("#"*15 + " controller page")
 		if error_404:
@@ -25,8 +25,6 @@ class View:
 		nb_of_turns = input("		nb_of_turns : ")
 		control_time = input("		controller_time : ")
 		description = input("		description : ")
-		# players
-		# rounds
 		return [name, place, date, nb_of_turns, control_time, description]
 
 	def form_add_player(self):
@@ -42,10 +40,10 @@ class View:
 		print("#"*15 + " Read reports")
 		text_read_reports = "\n \
 		1 : List of all players\n \
-		2 : List of all players in a tournament \n \
-		3 : List of all tournaments \n \
-		4 : Liste de tous les tours d'un tournoi \n \
-		5 : List of all matches in a tournament \n \
+		2 : List of all tournaments \n \
+		21 : List of all players in a tournament \n \
+		22 : Liste de tous les tours d'un tournoi \n \
+		23 : List of all matches in a tournament \n \
 		q : quit "
 		print(text_read_reports)
 
@@ -53,7 +51,7 @@ class View:
 		print("#"*15 + " List of all players \n")
 		print(" "*15 + " Ranking" +" "+"Name"+" "+"Firstname"+" "+"Gender"+" "+"Birthday")
 		for player in players:
-			print("		" + player["ranking"] +" "+ player["name"]
+			print("		" + str(player["ranking"]) +" "+ player["name"]
 				+" "+player["firstname"]+ " "+player["gender"]+" "+player["birthday"])
 		if order_by_name == True:
 			print("\n \
@@ -61,6 +59,12 @@ class View:
 		else:
 			print("\n \
 		1 : order by name")
+
+	def display_tournament(self, tournament_ids, tournament_instances):
+		print("#"*15 + " List of all tournaments \n")
+		print(" "*15 + " Id Name")
+		for Id, tournament in zip(tournament_ids, tournament_instances):
+			print("		{0} {1}".format(Id, tournament["name"]))
 
 	def display_players_for_tournement(self, id_list, players):
 		print("		Add players : enter the id of 8 players separated by commas")

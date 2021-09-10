@@ -8,7 +8,7 @@ class Controller(View, Database):
 		View.__init__(self)
 		Database.__init__(self)
 
-	def check_next(self, page, next_page):
+	def check_next_page(self, page, next_page):
 		if page == "1":
 			if next_page in ["1", "2", "3", "4"]:
 				return True
@@ -112,7 +112,7 @@ class Controller(View, Database):
 			View.error(self, error_list)
 			return True
 
-	def check_player_id(self, Ids):
+	def parse_and_check_player_id(self, Ids):
 		error_list = []
 		players = []
 		Ids.replace(' ', '')
@@ -158,57 +158,62 @@ class Controller(View, Database):
 
 	def main(self):
 		page = "1"
-		self.controller_page()
+		self.home_page()
 		while True:
 			next_page = input("Response : ")
-			if next_page == "q":
+			if next_page.lower() == "q":
 				quit()
 			elif page == "1":
-				validator = self.check_next(page, next_page)
+				validator = self.check_next_page(page, next_page)
 				if validator:
 					if next_page == "1":
-						tournement = View.form_add_tournement(self)
+						tournement = View.form_add_tournement(self) #we enter and retrieve the we enter with a single request
 						validator_tournement = self.check_form_add_tournement(tournement)
 						if  validator_tournement == True:
 							players = Database.select_players_for_tournement(self)
-							Id_list = View.display_players_for_tournement(self, players[0], players[1])
-							validator_Id = self.check_player_id(Id_list)
-							if validator_Id[0]:
-								player_instances = Database.select_player_id(self, validator_Id[1])
-								validator_instances = self.check_player_instance(validator_Id[1], player_instances)
-								print(validator_instances)
+							select_player_id = View.display_players_for_tournement(self, players[0], players[1])
+							validator_player_id = self.parse_and_check_player_id(select_player_id)
+							if validator_player_id[0]:
+								player_instances = Database.select_player_instances(self, validator_player_id[1])
+								validator_instances = self.check_player_instance(validator_player_id[1], player_instances)
 								if validator_instances:
 									match_list = self.pairing(player_instances)
-									# add rounds 
+									round_id = Database.add_round(self, match_list)
+									round_instance = Database.select_round(self, round_id)
+									tournement_id = Database.add_tournement(self, tournement[0], tournement[1], tournement[2],
+										tournement[3], [round_instance], validator_player_id[1], tournement[4], tournement[5])
+									tournement_instance = Database.select_tournement(self, tournement_id)
+									#View.display_tournement(self, tournement_instance)
+									print(tournement_instance)
 								else:
 									pass
-									#
 							else:
-								self.controller_page()
+								self.home_page()
 						else:
-							self.controller_page()
+							self.home_page()
 					elif next_page == "2":
 						add_again = "yes"
 						while add_again == "yes":
 							player = View.form_add_player(self)
 							self.check_form_add_player(player)
 							add_again = input("Add again ? yes/not : ")
-					
-							self.controller_page()
+						self.home_page()
 					elif next_page == "3":
 						page = page + next_page
 						View.read_reports(self)
 				else:
-					self.controller_page(error_404=True)
+					self.home_page(error_404=True)
 			elif page == "13":
-				validator = self.check_next(page, next_page)
+				validator = self.check_next_page(page, next_page)
 				if validator:
 					if next_page == "1":
 						page = page + next_page
 						players = Database.select_players(self)
 						View.display_players(self, players)
 					elif next_page == "2":
-						pass
+						page = page + next_page
+						tournament_instances = Database.select_tournaments_instances(self)
+						tournament_id = View.display_tournament(self, tournament_instances)
 					elif next_page == "3":
 						pass
 					elif next_page == "4":
@@ -216,7 +221,7 @@ class Controller(View, Database):
 					elif next_page == "5":
 						pass
 			elif page == "131":
-				validator = self.check_next(page, next_page)
+				validator = self.check_next_page(page, next_page)
 				if validator:
 					if next_page == "1":
 						players = Database.select_players(self)

@@ -7,31 +7,38 @@ class Database:
 		self.tournament_table = self.db.table('Tournament')
 		self.player_table = self.db.table('Player')
 		self.match_table = self.db.table('Match')
-		self.rounds_table = self.db.table('Rounds')
+		self.round_table = self.db.table('Rounds')
 
-	def add_tournement(self, name, place, date, number_of_turns, 
+	def add_tournement(self, name, place, date, number_of_turns, rounds, 
 		players, time_control, description):
-		Tournement = {
+		tournement = {
 			"name": name,
 			"place": place,
 			"date": date,
 			"number_of_turns": number_of_turns,
-			"rounds": "empty",
+			"rounds": rounds,
 			"players": players,
 			"time_control": time_control,
 			"description": description
 		}
-		self.tournament_table.insert(data)
+		tournament_id = self.tournament_table.insert(tournement)
+		return tournament_id
 
 	def add_player(self, name, firstname, birthday, gender):
-		Player = {
+		player = {
 			"name": name,
 			"firstname": firstname,
 			"birthday":birthday,
 			"gender": gender,
 			"ranking": 0
 		}
-		self.player_table.insert(data)
+		self.player_table.insert(player)
+
+	def update_ranking(self, player_id):
+		self.player_table.update({'ranking': 0}, doc_id=player_id)
+
+	def remove_player(self, player_id):
+		self.player_table.remove(doc_id=player_id)
 
 	def select_players(self, order_by_name=True):
 		players = self.player_table.all()
@@ -48,12 +55,12 @@ class Database:
 			id_list.append(player.doc_id)
 		return [id_list, players]
 
-	def select_player_id(self, player_id_list):
-		player_list = []
+	def select_player_instances(self, player_id_list):
+		player_instances = []
 		for player_id in player_id_list:
-			player = self.player_table.get(doc_id = int(player_id))
-			player_list.append(player)
-		return player_list
+			instance = self.player_table.get(doc_id = int(player_id))
+			player_instances.append(instance)
+		return player_instances
 
 	def add_match(self, player1, player2):
 		Match = {
@@ -62,12 +69,41 @@ class Database:
 		match_id = self.match_table.insert(Match)
 		return match_id
 
-	def add_rounds(self, name, matchs):
+	def select_match_id(self, match_id):
+		match_instance = self.match_table.get(doc_id = match_id)
+		return match_instance
+
+	def select_round(self, round_id):
+		round_instance = self.round_table.get(doc_id = round_id)
+		return round_instance
+
+	def add_round(self, match_list, name="Round1"):
+		match_instances_list = []
+		for match_id in match_list:
+			match_instance = self.select_match_id(match_id)
+			match_instances_list.append(match_instance)
 		Round = {
 			"name": name,
-			"matchs": matchs
+			"matchs": match_instances_list
 		}
-		self.rounds_table.insert(Round)
+		round_id = self.round_table.insert(Round)
+		return round_id
+
+	def select_tournement_id(self, tournement_id):
+		tournement_instance = self.tournament_table.get(doc_id = tournement_id)
+		return tournement_instance
+
+	def select_tournament_id(self, tournament_id):
+		tournament_id_list = []
+		for instance in tournament_instances:
+			tournament_id = instance.doc_id
+			tournament_id_list.append(instance)
+		return tournament_id_list
+
+	def select_tournaments_instances(self):
+		tournament_instances = self.tournament_table.all()
+		return tournament_instances
 
 	def drop_database(self):
-		pass
+		tournement_instance = self.tournament_table.all()
+		print(tournement_instance)
