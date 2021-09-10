@@ -212,8 +212,8 @@ class Controller(View, Database):
 						View.display_players(self, players)
 					elif next_page == "2":
 						page = page + next_page
-						tournament_instances = Database.select_tournaments_instances(self)
-						tournament_id = View.display_tournament(self, tournament_instances)
+						tournaments = Database.select_tournament(self)
+						tournament_choice = View.display_tournament(self, tournaments[0], tournaments[1])
 					elif next_page == "3":
 						pass
 					elif next_page == "4":

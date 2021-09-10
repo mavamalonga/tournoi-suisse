@@ -89,20 +89,12 @@ class Database:
 		round_id = self.round_table.insert(Round)
 		return round_id
 
-	def select_tournement_id(self, tournement_id):
-		tournement_instance = self.tournament_table.get(doc_id = tournement_id)
-		return tournement_instance
-
-	def select_tournament_id(self, tournament_id):
+	def select_tournament(self):
 		tournament_id_list = []
-		for instance in tournament_instances:
-			tournament_id = instance.doc_id
-			tournament_id_list.append(instance)
-		return tournament_id_list
-
-	def select_tournaments_instances(self):
 		tournament_instances = self.tournament_table.all()
-		return tournament_instances
+		for tournament in tournament_instances:
+			tournament_id_list.append(tournament.doc_id)
+		return [tournament_id_list, tournament_instances]
 
 	def drop_database(self):
 		tournement_instance = self.tournament_table.all()
