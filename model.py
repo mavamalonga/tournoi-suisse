@@ -96,6 +96,10 @@ class Database:
 			tournament_id_list.append(tournament.doc_id)
 		return [tournament_id_list, tournament_instances]
 
+	def select_tournament_id(self, tournament_id):
+		tournament = self.tournament_table.get(doc_id = int(tournament_id))
+		return tournament
+
 	def drop_database(self):
 		tournement_instance = self.tournament_table.all()
 		print(tournement_instance)

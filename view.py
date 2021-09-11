@@ -6,7 +6,7 @@ class View:
 
 	def home_page(self, error_404=False):
 		page = "1"
-		print("#"*15 + " controller page")
+		print("#"*15 + "home page")
 		if error_404:
 			self.error([self.error_404])
 		text_controller_page = "\n \
@@ -41,9 +41,14 @@ class View:
 		text_read_reports = "\n \
 		1 : List of all players\n \
 		2 : List of all tournaments \n \
-		21 : List of all players in a tournament \n \
-		22 : Liste de tous les tours d'un tournoi \n \
-		23 : List of all matches in a tournament \n \
+		q : quit "
+		print(text_read_reports)
+
+	def reports_tournament(self):
+		print("#"*15 + " tournament reports")
+		text_read_reports = "\n \
+		1 : List of all players in a tournament \n \
+		2 : List of all rounds in a tournament \n \
 		q : quit "
 		print(text_read_reports)
 
@@ -74,6 +79,20 @@ class View:
 				player["firstname"], player["name"], player["gender"], player["birthday"]))
 		Id = input("		Choice Id : ")
 		return Id 
+
+	def display_rounds(self, round_instance):
+		print("#"*15 + " List of rounds \n")
+		for single_round in round_instance:
+			print("		{0}".format(single_round['name']))
+			for match in single_round['matchs']:
+				player1 = match['Match'][0]
+				player1_instance = player1[0]
+				player1_score = player1[1]
+				player2 = match['Match'][1]
+				player2_instance = player2[0]
+				player2_score = player2[1]
+				print("		{0} {1} vs {2} {3}".format(player1_instance['name'], player1_score,
+					player2_instance['name'], player2_score))
 
 	def error(self, error_list):
 		print("\n \

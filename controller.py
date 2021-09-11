@@ -15,7 +15,7 @@ class Controller(View, Database):
 			else:
 				return False
 		if page == "13":
-			if next_page in ["1", "2", "3", "4", "5"]:
+			if next_page in ["1", "2"]:
 				return True
 			else:
 				return False
@@ -24,6 +24,13 @@ class Controller(View, Database):
 				return True
 			else:
 				return False
+		if page == "132":
+			try:
+				int(next_page) 
+				return True
+			except Exception as e:
+				return False
+
 
 	def check_form_add_tournement(self, tournement):
 		error_list = []
@@ -157,13 +164,13 @@ class Controller(View, Database):
 		return match_list
 
 	def main(self):
-		page = "1"
+		page = "1" #Home page
 		self.home_page()
 		while True:
 			next_page = input("Response : ")
 			if next_page.lower() == "q":
 				quit()
-			elif page == "1":
+			elif page == "1": 
 				validator = self.check_next_page(page, next_page)
 				if validator:
 					if next_page == "1":
@@ -213,13 +220,7 @@ class Controller(View, Database):
 					elif next_page == "2":
 						page = page + next_page
 						tournaments = Database.select_tournament(self)
-						tournament_choice = View.display_tournament(self, tournaments[0], tournaments[1])
-					elif next_page == "3":
-						pass
-					elif next_page == "4":
-						pass
-					elif next_page == "5":
-						pass
+						View.display_tournament(self, tournaments[0], tournaments[1])
 			elif page == "131":
 				validator = self.check_next_page(page, next_page)
 				if validator:
@@ -231,7 +232,26 @@ class Controller(View, Database):
 						View.display_players(self, players, order_by_name=False)
 				else:
 					pass
-		
+			elif page == "132":
+				validator = self.check_next_page(page, next_page)
+				if validator:
+					page = page + next_page
+					tournament_id = next_page
+					View.reports_tournament(self)
+				else:
+					pass
+			elif page == "1321":
+				if next_page == "1":
+					tournament = Database.select_tournament_id(self, tournament_id)
+					player_instances = Database.select_player_instances(self, tournament['players'])
+					View.display_rounds(self, player_instances)
+				elif next_page == "2":
+					tournament = Database.select_tournament_id(self, tournament_id)
+					View.display_rounds(self, tournament['rounds'])
+					# select all rounds in tournament
+				else:
+					pass
+					#View.error()
 
 if __name__ == '__main__':
 	controller = Controller()
