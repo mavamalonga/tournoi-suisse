@@ -8,30 +8,6 @@ class Controller(View, Database):
 		View.__init__(self)
 		Database.__init__(self)
 
-	def check_next_page(self, page, next_page):
-		if page == "1":
-			if next_page in ["1", "2", "3", "4"]:
-				return True
-			else:
-				return False
-		if page == "13":
-			if next_page in ["1", "2"]:
-				return True
-			else:
-				return False
-		if page == "131":
-			if next_page in ["1", "2"]:
-				return True
-			else:
-				return False
-		if page == "132":
-			try:
-				int(next_page) 
-				return True
-			except Exception as e:
-				return False
-
-
 	def check_form_add_tournement(self, tournement):
 		error_list = []
 		if len(tournement[0]) < 2 or len(tournement[0]) > 16:
@@ -119,7 +95,7 @@ class Controller(View, Database):
 			View.error(self, error_list)
 			return True
 
-	def parse_and_check_player_id(self, Ids):
+	def parse_and_check_selection_of_players(self, Ids):
 		error_list = []
 		players = []
 		Ids.replace(' ', '')
@@ -154,14 +130,14 @@ class Controller(View, Database):
 			View.error(self, error_list)
 			return False
 
-	def pairing(self, player_instance):
-		part_one = player_instance[:4]
-		part_two = player_instance[4:]
+	def pairing(self, selection_of_players):
+		part_one = selection_of_players[:4]
+		part_two = selection_of_players[4:]
 		match_list = []
 		for player1, player2 in zip(part_one, part_two):
 			match_id = Database.add_match(self, player1, player2)
 			match_list.append(match_id)
-		return match_list
+		return match_id_list
 
 	def main(self):
 		page = "1" #Home page
@@ -171,65 +147,55 @@ class Controller(View, Database):
 			if next_page.lower() == "q":
 				quit()
 			elif page == "1": 
-				validator = self.check_next_page(page, next_page)
-				if validator:
-					if next_page == "1":
-						tournement = View.form_add_tournement(self) #we enter and retrieve the we enter with a single request
-						validator_tournement = self.check_form_add_tournement(tournement)
-						if  validator_tournement == True:
-							players = Database.select_players_for_tournement(self)
-							select_player_id = View.display_players_for_tournement(self, players[0], players[1])
-							validator_player_id = self.parse_and_check_player_id(select_player_id)
-							if validator_player_id[0]:
-								player_instances = Database.select_player_instances(self, validator_player_id[1])
-								validator_instances = self.check_player_instance(validator_player_id[1], player_instances)
-								if validator_instances:
-									match_list = self.pairing(player_instances)
-									round_id = Database.add_round(self, match_list)
-									round_instance = Database.select_round(self, round_id)
-									tournement_id = Database.add_tournement(self, tournement[0], tournement[1], tournement[2],
-										tournement[3], [round_instance], validator_player_id[1], tournement[4], tournement[5])
-									tournement_instance = Database.select_tournement(self, tournement_id)
-									#View.display_tournement(self, tournement_instance)
-									print(tournement_instance)
-								else:
-									pass
+				if next_page == "1":
+					tournament = View.form_add_tournement(self)
+					validator_tournament = self.check_form_add_tournement(tournament)
+					if validator_tournament == True:
+						players = Database.select_players_id_and_instance(self)
+						selection_of_players = View.display_players_id_and_instance(self, players[0], players[1])
+						validator_selection_of_players = self.parse_and_check_selection_of_players(selection_of_players)
+						if validator_selection_of_players[0]:
+							validator_instances = self.check_player_instance(validator_selection_of_players[1], player_instances)
+							if validator_instances:
+								match_id_list = self.pairing(validator_selection_of_players[1])
+								round_id = Database.add_round(self, match_id_list)
+								round_instance = Database.select_round(self, round_id)
+								tournement_id = Database.add_tournement(self, tournement[0], tournement[1], tournement[2],
+									tournement[3], [round_instance], validator_player_id[1], tournement[4], tournement[5])
 							else:
 								self.home_page()
 						else:
 							self.home_page()
-					elif next_page == "2":
-						add_again = "yes"
-						while add_again == "yes":
-							player = View.form_add_player(self)
-							self.check_form_add_player(player)
-							add_again = input("Add again ? yes/not : ")
+					else:
 						self.home_page()
-					elif next_page == "3":
-						page = page + next_page
-						View.read_reports(self)
+				elif next_page == "2":
+					add_again = "yes"
+					while add_again == "yes":
+						player = View.form_add_player(self)
+						self.check_form_add_player(player)
+						add_again = input("Add again ? yes/not : ")
+					self.home_page()
+				elif next_page == "3":
+					page = page + next_page
+					View.read_reports(self)
 				else:
 					self.home_page(error_404=True)
 			elif page == "13":
-				validator = self.check_next_page(page, next_page)
-				if validator:
-					if next_page == "1":
-						page = page + next_page
-						players = Database.select_players(self)
-						View.display_players(self, players)
-					elif next_page == "2":
-						page = page + next_page
-						tournaments = Database.select_tournament(self)
-						View.display_tournament(self, tournaments[0], tournaments[1])
+				if next_page == "1":
+					page = page + next_page
+					players = Database.select_players(self)
+					View.display_players(self, players)
+				elif next_page == "2":
+					page = page + next_page
+					tournaments = Database.select_tournament(self)
+					View.display_tournament(self, tournaments[0], tournaments[1])
 			elif page == "131":
-				validator = self.check_next_page(page, next_page)
-				if validator:
-					if next_page == "1":
-						players = Database.select_players(self)
-						View.display_players(self, players)
-					elif next_page == "2":
-						players = Database.select_players(self, order_by_name=False)
-						View.display_players(self, players, order_by_name=False)
+				if next_page == "1":
+					players = Database.select_players(self)
+					View.display_players(self, players)
+				elif next_page == "2":
+					players = Database.select_players(self, order_by_name=False)
+					View.display_players(self, players, order_by_name=False)
 				else:
 					pass
 			elif page == "132":
@@ -251,7 +217,8 @@ class Controller(View, Database):
 					# select all rounds in tournament
 				else:
 					pass
-					#View.error()
+			else:
+				pass
 
 if __name__ == '__main__':
 	controller = Controller()

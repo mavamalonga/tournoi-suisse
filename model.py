@@ -48,25 +48,25 @@ class Database:
 			players_order = sorted(players, key=lambda k: k['ranking'])
 		return players_order
 
-	def select_players_for_tournement(self):
+	def select_players_id_and_instance(self):
 		id_list = []
 		players = self.player_table.all()
 		for player in players:
 			id_list.append(player.doc_id)
 		return [id_list, players]
 
-	def select_player_instances(self, player_id_list):
+	def select_player_instance(self, player_id_list):
 		player_instances = []
 		for player_id in player_id_list:
 			instance = self.player_table.get(doc_id = int(player_id))
 			player_instances.append(instance)
 		return player_instances
 
-	def add_match(self, player1, player2):
-		Match = {
-			"Match": ([player1, 0], [player2, 0])
+	def add_match(self, player1_id, player2_id):
+		match = {
+			"Match": ([player1_id, 0], [player2_id, 0])
 		}
-		match_id = self.match_table.insert(Match)
+		match_id = self.match_table.insert(match)
 		return match_id
 
 	def select_match_id(self, match_id):
@@ -100,6 +100,8 @@ class Database:
 		tournament = self.tournament_table.get(doc_id = int(tournament_id))
 		return tournament
 
-	def drop_database(self):
-		tournement_instance = self.tournament_table.all()
-		print(tournement_instance)
+	def drop_database(self, table):
+		self.db.drop_table(table)
+
+	def remove_player(self):
+		self.player_table.remove(doc_ids=[3, 11, 12, 13, 14])

@@ -71,7 +71,7 @@ class View:
 		for Id, tournament in zip(tournament_ids, tournament_instances):
 			print("		{0} {1}".format(Id, tournament["name"]))
 
-	def display_players_for_tournement(self, id_list, players):
+	def display_players_id_and_instance(self, id_list, players):
 		print("		Add players : enter the id of 8 players separated by commas")
 		print("		Id  Firstname  Name  Gender  Birthday")
 		for player_id, player in zip(id_list,players):
