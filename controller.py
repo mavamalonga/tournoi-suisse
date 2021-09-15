@@ -70,11 +70,11 @@ class Controller(View, Database):
 			try:
 				date = player[2].split("/")
 				for nb in date:
-				try:
-					int(nb)
-				except Exception as e:
-					date_error = "		- birthday must only contain integers"
-					error_list.append(date_error)
+					try:
+						int(nb)
+					except Exception as e:
+						date_error = "		- birthday must only contain integers"
+						error_list.append(date_error)
 			except Exception as e:
 				date_error = "		- the date of birth format is incorrect."
 				error_list.append(date_error)		

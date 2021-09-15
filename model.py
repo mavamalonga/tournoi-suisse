@@ -123,3 +123,6 @@ class Database:
 	def remove_round(self, round_id):
 		print(self.round_table.all())
 		self.round_table.remove(doc_ids=round_id)
+
+	def remove_player(self, player_id):
+		self.player_table.remove(doc_ids=player_id)
