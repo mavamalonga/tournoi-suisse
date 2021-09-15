@@ -160,7 +160,7 @@ class Controller(View, Database):
 					validator_tournament = self.check_form_add_tournament(tournament_values)
 					if validator_tournament == True:
 						id_list, instances = Database.select_from_player_table(self, get_id=True, get_instance=True)
-						selection_of_players = View.display_players_1(self, id_list, instances)
+						selection_of_players = View.display_list_players(self, id_list, instances)
 						selection_of_players = self.parse_select_of_players(selection_of_players)
 						validator_selection_of_players = self.check_selection_of_players(selection_of_players)
 						if validator_selection_of_players:

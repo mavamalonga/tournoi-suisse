@@ -27,7 +27,7 @@ class View:
 		description = input("		description : ")
 		return [name, place, date, nb_of_turns, control_time, description]
 
-	def display_players_1(self, id_list, players):
+	def display_list_players(self, id_list, players):
 		print("		Add players : enter the id of 8 players separated by commas")
 		print("		Id  Firstname  Name  Gender  Birthday")
 		for player_id, player in zip(id_list,players):
