@@ -207,19 +207,19 @@ class Controller(View, Database):
 			elif page == "13":
 				if next_page == "1":
 					page = page + next_page
-					players = Database.select_players(self)
-					View.display_players(self, players)
+					players = Database.select_from_player_table(self, get_instance=True, order_by_name="name")
+					View.display_report_player(self, players)
 				elif next_page == "2":
 					page = page + next_page
 					tournaments = Database.select_tournament(self)
 					View.display_tournament(self, tournaments[0], tournaments[1])
 			elif page == "131":
 				if next_page == "1":
-					players = Database.select_players(self)
-					View.display_players(self, players)
+					players = Database.select_from_player_table(self, get_instance=True, order_by_name="ranking")
+					View.display_report_player(self, players)
 				elif next_page == "2":
-					players = Database.select_players(self, order_by_name=False)
-					View.display_players(self, players, order_by_name=False)
+					players = Database.select_from_player_table(self, get_instance=True, order_by_name="ranking")
+					View.display_report_player(self, players)
 				else:
 					pass
 			elif page == "132":

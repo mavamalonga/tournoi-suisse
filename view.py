@@ -61,7 +61,7 @@ class View:
 		q : quit "
 		print(text_read_reports)
 
-	def display_players(self, players, order_by_name=True):
+	def display_report_player(self, players, order_by_name=True):
 		print("#"*15 + " List of all players \n")
 		print(" "*15 + " Ranking" +" "+"Name"+" "+"Firstname"+" "+"Gender"+" "+"Birthday")
 		for player in players:

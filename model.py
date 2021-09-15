@@ -31,7 +31,7 @@ class Database:
 			"firstname": firstname,
 			"birthday":birthday,
 			"gender": gender,
-			"ranking": ranking
+			"ranking": int(ranking)
 		}
 		self.player_table.insert(player)
 
@@ -77,17 +77,18 @@ class Database:
 	def select_from_player_table(self, get_id=None, get_instance=None, where_id=None, order_by_name=None):
 		"""toutes les requêtes select sur la table player"""
 		instances = self.player_table.all()
-		if get_instance==True and order_by_name != None:
+
+		if get_id == True and  get_instance == True and order_by_name == None:
+			id_list = []
+			for player in instances:
+				id_list.append(player.doc_id)
+			return id_list, instances
+		elif get_instance == True and order_by_name != None:
 			if order_by_name == "name":
 				instances = sorted(instances, key=lambda k: k['name'])
 			else:
 				instances = sorted(instances, key=lambda k: k['ranking'])
 			return instances
-		elif get_id == True and  get_instance == True:
-			id_list = []
-			for player in instances:
-				id_list.append(player.doc_id)
-			return id_list, instances
 		elif get_instance == True and where_id != None:
 			instances = []
 			for player_id in where_id:
@@ -126,3 +127,6 @@ class Database:
 
 	def remove_player(self, player_id):
 		self.player_table.remove(doc_ids=player_id)
+
+	def update_player(self):
+		self.player_table.update({"ranking": 9}, doc_ids=[11])
