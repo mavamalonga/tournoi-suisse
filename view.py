@@ -10,14 +10,14 @@ class View:
 		if error_404:
 			self.error([self.error_404])
 		text_controller_page = "\n \
-		1 : Create new tournement \n \
-		2 : Add new player in database \n \
+		1 : Add new tournament \n \
+		2 : Add new player \n \
 		3 : Read reports \n \
 		4 : Settings \n \
 		q : quit "
 		print(text_controller_page)
 		
-	def form_add_tournement(self):
+	def form_add_tournament(self):
 		print("#"*15 + " form create tournement")
 		name = input("		name : ")
 		place = input("		place : ")
@@ -27,14 +27,23 @@ class View:
 		description = input("		description : ")
 		return [name, place, date, nb_of_turns, control_time, description]
 
+	def display_players_1(self, id_list, players):
+		print("		Add players : enter the id of 8 players separated by commas")
+		print("		Id  Firstname  Name  Gender  Birthday")
+		for player_id, player in zip(id_list,players):
+			print('		 {0}  {1}  {2}  {3}  {4}'.format(player_id, 
+				player["firstname"], player["name"], player["gender"], player["birthday"]))
+		Id = input("		Choice Id : ")
+		return Id 
+
 	def form_add_player(self):
 		print("#"*15 + " Form player")
 		name = input("		name : ")
 		firstname = input("		firstname : ")
 		birthday = input("		birthday : ")
 		gender = input("		gender : ")
-		#ranking = input("		ranking : ")
-		return [name, firstname, birthday, gender]
+		ranking = input("		ranking : ")
+		return [name, firstname, birthday, gender, ranking]
 
 	def read_reports(self):
 		print("#"*15 + " Read reports")
@@ -70,15 +79,6 @@ class View:
 		print(" "*15 + " Id Name")
 		for Id, tournament in zip(tournament_ids, tournament_instances):
 			print("		{0} {1}".format(Id, tournament["name"]))
-
-	def display_players_id_and_instance(self, id_list, players):
-		print("		Add players : enter the id of 8 players separated by commas")
-		print("		Id  Firstname  Name  Gender  Birthday")
-		for player_id, player in zip(id_list,players):
-			print('		 {0}  {1}  {2}  {3}  {4}'.format(player_id, 
-				player["firstname"], player["name"], player["gender"], player["birthday"]))
-		Id = input("		Choice Id : ")
-		return Id 
 
 	def display_rounds(self, round_instance):
 		print("#"*15 + " List of rounds \n")

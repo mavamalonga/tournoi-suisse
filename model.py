@@ -1,4 +1,5 @@
 from tinydb import TinyDB, Query
+from datetime import datetime
 
 class Database:
 	def __init__(self):
@@ -9,9 +10,9 @@ class Database:
 		self.match_table = self.db.table('Match')
 		self.round_table = self.db.table('Rounds')
 
-	def add_tournement(self, name, place, date, number_of_turns, rounds, 
+	def add_tournament(self, name, place, date, number_of_turns, rounds, 
 		players, time_control, description):
-		tournement = {
+		tournament = {
 			"name": name,
 			"place": place,
 			"date": date,
@@ -21,87 +22,104 @@ class Database:
 			"time_control": time_control,
 			"description": description
 		}
-		tournament_id = self.tournament_table.insert(tournement)
+		tournament_id = self.tournament_table.insert(tournament)
 		return tournament_id
 
-	def add_player(self, name, firstname, birthday, gender):
+	def add_player(self, name, firstname, birthday, gender, ranking):
 		player = {
 			"name": name,
 			"firstname": firstname,
 			"birthday":birthday,
 			"gender": gender,
-			"ranking": 0
+			"ranking": ranking
 		}
 		self.player_table.insert(player)
 
-	def update_ranking(self, player_id):
-		self.player_table.update({'ranking': 0}, doc_id=player_id)
-
-	def remove_player(self, player_id):
-		self.player_table.remove(doc_id=player_id)
-
-	def select_players(self, order_by_name=True):
-		players = self.player_table.all()
-		if order_by_name:
-			players_order = sorted(players, key=lambda k: k['name'])
-		else:
-			players_order = sorted(players, key=lambda k: k['ranking'])
-		return players_order
-
-	def select_players_id_and_instance(self):
-		id_list = []
-		players = self.player_table.all()
-		for player in players:
-			id_list.append(player.doc_id)
-		return [id_list, players]
-
-	def select_player_instance(self, player_id_list):
-		player_instances = []
-		for player_id in player_id_list:
-			instance = self.player_table.get(doc_id = int(player_id))
-			player_instances.append(instance)
-		return player_instances
-
-	def add_match(self, player1_id, player2_id):
+	def add_match(self, player1, player2, score1=0, score2=0):
 		match = {
-			"Match": ([player1_id, 0], [player2_id, 0])
+			"match": ([player1, score1], [player2, score2])
 		}
 		match_id = self.match_table.insert(match)
 		return match_id
 
-	def select_match_id(self, match_id):
-		match_instance = self.match_table.get(doc_id = match_id)
-		return match_instance
+	def select_from_match_table(self, get_id=None, get_instance=None, where_id=None):
+		""" get_id and get_instances takes boolean values, where_id take list value"""
+		match_list = []
+		if get_instance == True and where_id != None:
+			for match_id in where_id:
+				match_instance = self.match_table.get(doc_id = match_id)
+				match_list.append(match_instance)
+			return match_list
 
-	def select_round(self, round_id):
-		round_instance = self.round_table.get(doc_id = round_id)
-		return round_instance
-
-	def add_round(self, match_list, name="Round1"):
-		match_instances_list = []
-		for match_id in match_list:
-			match_instance = self.select_match_id(match_id)
-			match_instances_list.append(match_instance)
+	def add_round(self, match_list, name, status="In progress"):
 		Round = {
 			"name": name,
-			"matchs": match_instances_list
+			"status": status,
+			"start_date": datetime.now().strftime("%d/%m/%Y/%H %H:%M:%S"),
+			"end_date": "NA",
+			"matchs": match_list
 		}
 		round_id = self.round_table.insert(Round)
-		return round_id
+		return [round_id]
 
-	def select_tournament(self):
-		tournament_id_list = []
-		tournament_instances = self.tournament_table.all()
-		for tournament in tournament_instances:
-			tournament_id_list.append(tournament.doc_id)
-		return [tournament_id_list, tournament_instances]
+	def select_from_round_table(self, get_id=None, get_instance=None, where_id=None):
+		""" get_id and get_instances takes boolean values, where_id take list value"""
+		round_instances = []
+		if get_instance==True and where_id != None:
+			for round_id in where_id:
+				round_instance = self.round_table.get(doc_id = round_id)
+				round_instances.append(round_instance)
+		return round_instances
 
-	def select_tournament_id(self, tournament_id):
-		tournament = self.tournament_table.get(doc_id = int(tournament_id))
-		return tournament
+	def update_ranking(self, ranking, player_id): #player_id list
+		self.player_table.update({'ranking': ranking}, doc_ids=player_id)
+
+	def select_from_player_table(self, get_id=None, get_instance=None, where_id=None, order_by_name=None):
+		"""toutes les requêtes select sur la table player"""
+		instances = self.player_table.all()
+		if get_instance==True and order_by_name != None:
+			if order_by_name == "name":
+				instances = sorted(instances, key=lambda k: k['name'])
+			else:
+				instances = sorted(instances, key=lambda k: k['ranking'])
+			return instances
+		elif get_id == True and  get_instance == True:
+			id_list = []
+			for player in instances:
+				id_list.append(player.doc_id)
+			return id_list, instances
+		elif get_instance == True and where_id != None:
+			instances = []
+			for player_id in where_id:
+				player_instance = self.player_table.get(doc_id = int(player_id))
+				instances.append(player_instance)
+			return instances
+
+	def remove_from_player_table(self, player_id):
+		self.player_table.remove(doc_id=player_id)
+
+	def select_tournament(self, screen="report", tournament_id=None):
+		if screen == "report":
+			tournament_id_list = []
+			tournament_instances = self.tournament_table.all()
+			for tournament in tournament_instances:
+				tournament_id_list.append(tournament.doc_id)
+			return [tournament_id_list, tournament_instances]
+		elif screen == "empty":
+			tournament = self.tournament_table.get(doc_id = int(tournament_id))
+			return tournament
 
 	def drop_database(self, table):
 		self.db.drop_table(table)
 
-	def remove_player(self):
-		self.player_table.remove(doc_ids=[3, 11, 12, 13, 14])
+	def remove_match(self, match_id):
+		print(self.match_table.all())
+		self.match_table.remove(doc_ids=match_id)
+
+	def remove_tournament(self, tournament_id):
+		print(self.tournament_table.all())
+		self.tournament_table.remove(doc_ids=tournament_id)
+
+	def remove_round(self, round_id):
+		print(self.round_table.all())
+		self.round_table.remove(doc_ids=round_id)
