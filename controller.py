@@ -152,8 +152,7 @@ class Controller(View, Database):
 		error_list = []
 		for pts in list_points:
 			if type(pts) != float and type(pts) != int:
-
-
+				type_error = "		- points only accepts the following values : 0, 0.5, 1"
 
 	def pairing_and_add_match(self, instances):
 		instances_order_by_ranking = sorted(instances, key=lambda k: k['ranking'])
