@@ -137,6 +137,24 @@ class Controller(View, Database):
 			View.error(self, error_list)
 			return False
 
+	def check_select_tournament(self, tournament_id):
+		error_list = []
+		try:
+			int(tournament_id)
+			return True
+		except Exception as e:
+			id_error = "		- tournament_id must only contain integers. :{0}".format(tournament_id)
+			error_list.append(id_error)
+			View.error(self, error_list)
+			return False
+
+	def check_points(self, list_points):
+		error_list = []
+		for pts in list_points:
+			if type(pts) != float and type(pts) != int:
+
+
+
 	def pairing_and_add_match(self, instances):
 		instances_order_by_ranking = sorted(instances, key=lambda k: k['ranking'])
 		part_one = instances_order_by_ranking[:4]
@@ -168,20 +186,9 @@ class Controller(View, Database):
 							validator_instances = self.check_instances_players(selection_of_players, instances)
 							if validator_instances:
 								list_match_id = self.pairing_and_add_match(instances)
-								print("list match id")
-								print(list_match_id)
 								list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
-								print("list match instance")
-								print(list_match_instance)
 								round_id = Database.add_round(self, list_match_instance, name="Round 1", status="in progress")
 								round_instance = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
-								print("0" + tournament_values[0])
-								print("1" + tournament_values[1])
-								print("2" + tournament_values[2])
-								print("3" + tournament_values[3])
-								print("4" + tournament_values[4])
-								print("5" + tournament_values[5])
-								print(round_instance[0])
 								Database.add_tournament(self, tournament_values[0], tournament_values[1], tournament_values[2],
 									tournament_values[3], round_instance[0], selection_of_players, tournament_values[4], tournament_values[5])
 							else:
@@ -208,39 +215,37 @@ class Controller(View, Database):
 				if next_page == "1":
 					page = page + next_page
 					players = Database.select_from_player_table(self, get_instance=True, order_by_name="name")
-					View.display_report_player(self, players)
+					View.display_list_players(self, players, order_by_name="name")
 				elif next_page == "2":
 					page = page + next_page
-					tournaments = Database.select_tournament(self)
-					View.display_tournament(self, tournaments[0], tournaments[1])
+					ids, instances = Database.select_from_tournament_table(self, 
+						get_id=True, get_instance=True)
+					View.display_list_tournaments(self, ids, instances)
 			elif page == "131":
 				if next_page == "1":
-					players = Database.select_from_player_table(self, get_instance=True, order_by_name="ranking")
-					View.display_report_player(self, players)
+					players = Database.select_from_player_table(self, get_instance=True, order_by_name="name")
+					View.display_list_players(self, players, order_by_name="name")
 				elif next_page == "2":
 					players = Database.select_from_player_table(self, get_instance=True, order_by_name="ranking")
-					View.display_report_player(self, players)
+					View.display_list_players(self, players, order_by_name="ranking")
 				else:
-					pass
+					print("j'ai pas compris !")
 			elif page == "132":
-				validator = self.check_next_page(page, next_page)
-				if validator:
-					page = page + next_page
-					tournament_id = next_page
-					View.reports_tournament(self)
+				validator_tournament = self.check_select_tournament(next_page)
+				if validator_tournament:
+					page = page + "t"
+					instance = Database.select_from_tournament_table(self, get_instance=True, where_id=next_page)
+					View.display_tournament(self, instance)
 				else:
 					pass
-			elif page == "1321":
-				if next_page == "1":
-					tournament = Database.select_tournament_id(self, tournament_id)
-					player_instances = Database.select_player_instances(self, tournament['players'])
-					View.display_rounds(self, player_instances)
-				elif next_page == "2":
-					tournament = Database.select_tournament_id(self, tournament_id)
-					View.display_rounds(self, tournament['rounds'])
-					# select all rounds in tournament
-				else:
+			elif page == "132t":
+				if next_page == "r":
+					list_results = View.display_form_results(self, instance)
+					print(list_results)
+				elif next_page == "p":
 					pass
+				else:
+					print("j'ai pas compris")
 			else:
 				pass
 

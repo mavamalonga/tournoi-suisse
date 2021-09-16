@@ -99,16 +99,18 @@ class Database:
 	def remove_from_player_table(self, player_id):
 		self.player_table.remove(doc_id=player_id)
 
-	def select_tournament(self, screen="report", tournament_id=None):
-		if screen == "report":
-			tournament_id_list = []
+	def select_from_tournament_table(self, get_id=None, get_instance=None, where_id=None):
+		if get_id == True and get_instance == True and where_id == None:
+			tournament_ids = []
 			tournament_instances = self.tournament_table.all()
-			for tournament in tournament_instances:
-				tournament_id_list.append(tournament.doc_id)
-			return [tournament_id_list, tournament_instances]
-		elif screen == "empty":
-			tournament = self.tournament_table.get(doc_id = int(tournament_id))
-			return tournament
+			for instance in tournament_instances:
+				tournament_ids.append(instance.doc_id)
+			return tournament_ids, tournament_instances
+		elif get_instance == True and where_id != None:
+			instance = self.tournament_table.get(doc_id = int(where_id))
+			return instance
+		else:
+			return None
 
 	def drop_database(self, table):
 		self.db.drop_table(table)

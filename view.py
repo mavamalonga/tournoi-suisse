@@ -61,38 +61,49 @@ class View:
 		q : quit "
 		print(text_read_reports)
 
-	def display_report_player(self, players, order_by_name=True):
+	def display_list_players(self, players, order_by_name):
 		print("#"*15 + " List of all players \n")
 		print(" "*15 + " Ranking" +" "+"Name"+" "+"Firstname"+" "+"Gender"+" "+"Birthday")
 		for player in players:
 			print("		" + str(player["ranking"]) +" "+ player["name"]
 				+" "+player["firstname"]+ " "+player["gender"]+" "+player["birthday"])
-		if order_by_name == True:
+		if order_by_name == "name":
 			print("\n \
 		2 : order by ranking")
 		else:
 			print("\n \
 		1 : order by name")
 
-	def display_tournament(self, tournament_ids, tournament_instances):
-		print("#"*15 + " List of all tournaments \n")
-		print(" "*15 + " Id Name")
-		for Id, tournament in zip(tournament_ids, tournament_instances):
-			print("		{0} {1}".format(Id, tournament["name"]))
+	def display_list_tournaments(self, ids, instances):
+		print("#"*15 + " List of all tournament \n")
+		print(f"{' '*15} Id  Name    Date")
+		for tournament_id, tournament_instance in zip(ids, instances):
+			print(f"		{tournament_id}   {tournament_instance['name']} {tournament_instance['date']}")
 
-	def display_rounds(self, round_instance):
-		print("#"*15 + " List of rounds \n")
-		for single_round in round_instance:
-			print("		{0}".format(single_round['name']))
-			for match in single_round['matchs']:
-				player1 = match['Match'][0]
-				player1_instance = player1[0]
-				player1_score = player1[1]
-				player2 = match['Match'][1]
-				player2_instance = player2[0]
-				player2_score = player2[1]
-				print("		{0} {1} vs {2} {3}".format(player1_instance['name'], player1_score,
-					player2_instance['name'], player2_score))
+	def display_tournament(self, instance):
+		print(f"{'#'*15} {instance['name']} \n")
+		for attr in instance:
+			if attr != "rounds" and attr != "players":
+				print(f"{' '*15} {attr} {instance[str(attr)]}")
+		"""Display round and matchs"""
+		print(f"{' '*15} {instance['rounds']['name']}")
+		for match in instance['rounds']['matchs']:
+			player1, player2 = match['match']
+			print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
+		print(f"{' '*15} To enter the results press the key 'r'")
+		print(f"{' '*15} To display all the players of the tournament press the key 'p'")
+
+	def display_form_results(self, instance):
+		print(f"{'#'*15} Results \n")
+		list_pts = []
+		for match in instance['rounds']['matchs']:
+			player1, player2 = match['match']
+			print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
+			pts = input(f"{' '*20} {player1[0]['name']} points : ")
+			list_pts.append(pts)
+			pts = input(f"{' '*20} {player2[0]['name']} points : ")
+			list_pts.append(pts)
+		return list_pts
 
 	def error(self, error_list):
 		print("\n \
