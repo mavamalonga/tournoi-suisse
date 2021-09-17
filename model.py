@@ -112,7 +112,22 @@ class Database:
 		else:
 			return None
 
-	def drop_database(self, table):
+	def update_match_score(self, tournament_id, list_points):
+		# récupérer l'instance du tournoi
+		# extraire la list de matchs du tournoi 
+		# update les scores de matchs 
+		# remplacer l'ancienne liste de matchs du tournoi par la nouvelle avec la methode update
+		#self.tournament_table.update({'rounds': {'matchs': new_list }}, doc_ids=[tournament_id])
+		"""
+		for match in instance['rounds']['matchs']:
+			
+
+			match['match'][0][1] # score p1
+			match['match'][1][1] # score p2
+		"""
+		pass
+
+	def drop_table(self, table):
 		self.db.drop_table(table)
 
 	def remove_match(self, match_id):

@@ -186,9 +186,8 @@ class Controller(View, Database):
 		if len(error_list) == 0:
 			return True
 		else:
-			View.error(error_list)
+			View.error(self, error_list)
 			return False
-
 
 	def pairing_and_add_match(self, instances):
 		instances_order_by_ranking = sorted(instances, key=lambda k: k['ranking'])
@@ -276,12 +275,12 @@ class Controller(View, Database):
 			elif page == "132t":
 				if next_page == "r":
 					list_points = View.display_form_results(self, instance)
-					validator_points, new_list_points = self.convert_points(list_points)
-					print(validator_points, new_list_points)
-					# check_points(new_list_points)
-					exit()
-					if validator_points:
-						print(new_list_points)
+					validator_convert, new_list_points = self.convert_points(list_points)
+					if validator_convert:
+						validator_points = self.check_points_values(new_list_points)
+						if validator_points:
+							print(new_list_points)
+							#Database.update_match_score(self, new_list_points)
 				elif next_page == "p":
 					pass
 				else:
