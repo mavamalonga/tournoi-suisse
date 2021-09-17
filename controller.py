@@ -175,8 +175,20 @@ class Controller(View, Database):
 			View.error(self, error_list)
 			return False, None
 
-	def check_points(self, list_points):
-		pass
+	def check_points_values(self, list_points):
+		error_list = []
+		for value in list_points:
+			if value == 0 or value == 0.5 or value == 1:
+				pass
+			else:
+				error = f"{' '*15} {value}' value is incorrect, points only accept the following values : 0, 0.5, 1"
+				error_list.append(error)
+		if len(error_list) == 0:
+			return True
+		else:
+			View.error(error_list)
+			return False
+
 
 	def pairing_and_add_match(self, instances):
 		instances_order_by_ranking = sorted(instances, key=lambda k: k['ranking'])
