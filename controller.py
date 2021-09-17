@@ -148,11 +148,35 @@ class Controller(View, Database):
 			View.error(self, error_list)
 			return False
 
-	def check_points(self, list_points):
+	def convert_points(self, list_points):
+		new_list_points = []
 		error_list = []
 		for pts in list_points:
-			if type(pts) != float and type(pts) != int:
-				type_error = "		- points only accepts the following values : 0, 0.5, 1"
+			try:
+				value = int(pts)
+				int_validator = "True"
+			except Exception as e:
+				int_validator = "False"
+				try:
+					value = float(pts)
+					float_validator = "True"
+				except Exception as e:
+					float_validator = "False"
+
+			if int_validator == "True" or float_validator == "True":
+				new_list_points.append(value)
+			else:
+				error_type = "		- '{0}' value is incorrect, points only accept values of type int and float".format(pts)
+				error_list.append(error_type)
+		
+		if len(error_list) == 0:
+			return True, new_list_points
+		else:
+			View.error(self, error_list)
+			return False, None
+
+	def check_points(self, list_points):
+		pass
 
 	def pairing_and_add_match(self, instances):
 		instances_order_by_ranking = sorted(instances, key=lambda k: k['ranking'])
@@ -239,8 +263,13 @@ class Controller(View, Database):
 					pass
 			elif page == "132t":
 				if next_page == "r":
-					list_results = View.display_form_results(self, instance)
-					print(list_results)
+					list_points = View.display_form_results(self, instance)
+					validator_points, new_list_points = self.convert_points(list_points)
+					print(validator_points, new_list_points)
+					# check_points(new_list_points)
+					exit()
+					if validator_points:
+						print(new_list_points)
 				elif next_page == "p":
 					pass
 				else:
