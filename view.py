@@ -25,45 +25,42 @@ class View:
 		controller_time = "controller time : "
 		description = "description : "
 		lines = [name, place, date, nb_of_turns, controller_time, 
-			description, description]
+			description]
 		for line in lines:
 			value = input(f'{" "*15} {line}')
 			form_values.append(value)
 		return form_values
 
-	def display_list_players(self, id_list, players):
-		print("		Add players : enter the id of 8 players separated by commas")
-		print("		Id  Firstname  Name  Gender  Birthday")
-		for player_id, player in zip(id_list,players):
-			print('		 {0}  {1}  {2}  {3}  {4}'.format(player_id, 
-				player["firstname"], player["name"], player["gender"], player["birthday"]))
-		Id = input("		Choice Id : ")
-		return Id 
-
 	def form_add_player(self):
-		print("#"*15 + " Form player")
-		name = input("		name : ")
-		firstname = input("		firstname : ")
-		birthday = input("		birthday : ")
-		gender = input("		gender : ")
-		ranking = input("		ranking : ")
-		return [name, firstname, birthday, gender, ranking]
+		print(f'{"#"*15} ADD PLAYER')
+		form_values = []
+		name = "name : "
+		firstname = "firstname : "
+		birthday = "birthday : "
+		gender = "gender : "
+		ranking = "ranking : "
+		lines = [name, firstname, birthday, gender, ranking]
+		for line in lines:
+			value = input(f'{" "*15} {line}')
+			form_values.append(value)
+		return form_values
 
-	def read_reports(self):
-		print(f'{"#"*15} Read reports')
-		text_read_reports = "\n \
-		1 : List of all players\n \
-		2 : List of all tournaments \n \
-		q : quit "
-		print(text_read_reports)
+	def reports(self):
+		print(f'{"#"*15} REPORTS')
+		a = "1 : List of all players"
+		b = "2 : List of all tournaments"
+		c = "q : quit"
+		lines = [a, b, c]
+		for line in lines:
+			print(f'{" "*15} {line}')
 
-	def reports_tournament(self):
-		print(f'{"#"*15} tournament reports')
-		text_read_reports = "\n \
-		1 : List of all players in a tournament \n \
-		2 : List of all rounds in a tournament \n \
-		q : quit "
-		print(text_read_reports)
+	def tournament_add_players(self, id_list, instances):
+		print(f'{" "*15} Add players : enter the id of 8 players separated by commas')
+		print(f'{" "*17} Id  Firstname  Name  Gender  Birthday')
+		for player_id, player_instance in zip(id_list, instances):
+			print(f'{" "*17} {player_id} {player_instance["firstname"]} {player_instance["name"]}')
+		ids = input(f'{" "*15} Choice ids : ')
+		return ids
 
 	def display_list_players(self, players, order_by_name):
 		print(f'{"#"*15} List of all players \n')
@@ -83,8 +80,9 @@ class View:
 		for tournament_id, tournament_instance in zip(ids, instances):
 			print(f"{' '*15} {tournament_id}   {tournament_instance['name']} {tournament_instance['date']}")
 
-	def display_tournament(self, instance):
-		print(f"{'#'*15} {instance['name']} \n")
+	#display_tournament => tournament_menu
+	def tournament_menu(self, instance):
+		print(f"{'#'*15} Tournament {instance['name']} \n")
 		for attr in instance:
 			if attr != "rounds" and attr != "players":
 				print(f"{' '*15} {attr} {instance[str(attr)]}")
@@ -94,6 +92,21 @@ class View:
 			print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
 		print(f"{' '*15} To enter the results press the key 'r'")
 		print(f"{' '*15} To display all the players of the tournament press the key 'p'")
+
+	
+		"1 : List of all players in a tournament"
+		"2 : List of all rounds in a tournament"
+		"q : quit "
+
+	"""
+	def rounds(self, tournament_instance):
+		print(f"{' '*15} {instance['rounds']['name']}")
+		for match in instance['rounds']['matchs']:
+			player1, player2 = match['match']
+			print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
+		print(f"{' '*15} To enter the results press the key 'r'")
+		print(f"{' '*15} To display all the players of the tournament press the key 'p'")
+	"""
 
 	def display_form_results(self, instance):
 		print(f"{'#'*15} Results \n")

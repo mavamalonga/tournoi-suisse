@@ -227,7 +227,7 @@ class Controller(View, Database):
 					validator_tournament = self.check_form_add_tournament(tournament_values)
 					if validator_tournament == True:
 						id_list, instances = Database.select_from_player_table(self, get_id=True, get_instance=True)
-						selection_of_players = View.display_list_players(self, id_list, instances)
+						selection_of_players = View.tournament_add_players(self, id_list, instances)
 						selection_of_players = self.parse_select_of_players(selection_of_players)
 						validator_selection_of_players = self.check_selection_of_players(selection_of_players)
 						if validator_selection_of_players:
@@ -257,7 +257,7 @@ class Controller(View, Database):
 					self.home_page()
 				elif next_page == "3":
 					page = page + next_page
-					View.read_reports(self)
+					View.reports(self)
 				else:
 					self.home_page()
 			elif page == "13":
@@ -285,7 +285,7 @@ class Controller(View, Database):
 				if validator_tournament:
 					page = page + "t"
 					instance = Database.select_from_tournament_table(self, get_instance=True, where_id=tournament_id)
-					View.display_tournament(self, instance)
+					View.tournament_menu(self, instance)
 				else:
 					pass
 			elif page == "132t":
