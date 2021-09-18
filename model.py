@@ -113,19 +113,25 @@ class Database:
 			return None
 
 	def update_match_score(self, tournament_id, list_points):
-		# récupérer l'instance du tournoi
-		# extraire la list de matchs du tournoi 
-		# update les scores de matchs 
-		# remplacer l'ancienne liste de matchs du tournoi par la nouvelle avec la methode update
-		#self.tournament_table.update({'rounds': {'matchs': new_list }}, doc_ids=[tournament_id])
-		"""
-		for match in instance['rounds']['matchs']:
-			
+		instance = self.select_from_tournament_table(get_instance=True, where_id=tournament_id)
+		update_matchs = []
+		for match, score in zip(instance['rounds']['matchs'], list_points):
+			score_player1, score_player2 = score
+			instance_player1 = match['match'][0][0]
+			instance_player2 = match['match'][1][0]
+			match['match'][0][1] = score_player1
+			match['match'][1][1] = score_player2
+			update_matchs.append({'match':([instance_player1, match['match'][0][1]], 
+				[instance_player2, match['match'][1][1]])})
 
-			match['match'][0][1] # score p1
-			match['match'][1][1] # score p2
-		"""
-		pass
+		update_round = {
+			"name": instance['rounds']['name'],
+			"start_date": instance['rounds']['start_date'],
+			"end_date": datetime.now().strftime("%d/%m/%Y/%H %H:%M:%S"),
+			"matchs": update_matchs
+		}
+
+		self.tournament_table.update({'rounds': update_round }, doc_ids=[int(tournament_id)])
 
 	def drop_table(self, table):
 		self.db.drop_table(table)

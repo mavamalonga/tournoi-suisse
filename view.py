@@ -2,30 +2,34 @@ from model import Database
 
 class View:
 	def __init__(self):
-		self.error_404 = "		page not found"
+		pass
 
-	def home_page(self, error_404=False):
-		page = "1"
-		print("#"*15 + "home page")
-		if error_404:
-			self.error([self.error_404])
-		text_controller_page = "\n \
-		1 : Add new tournament \n \
-		2 : Add new player \n \
-		3 : Read reports \n \
-		4 : Settings \n \
-		q : quit "
-		print(text_controller_page)
+	def home_page(self):
+		print(f'{"#"*15} HOME')
+		a = "1 : Add new tournament"
+		b = "2 : Add new player"
+		c = "3 : Read reports"
+		d = "4 : Settings"
+		e = "q : quit"
+		lines = [a, b, c, d, e]
+		for line in lines:
+			print(f'{" "*15} {line}')
 		
 	def form_add_tournament(self):
-		print("#"*15 + " form create tournement")
-		name = input("		name : ")
-		place = input("		place : ")
-		date = input("		date : ")
-		nb_of_turns = input("		nb_of_turns : ")
-		control_time = input("		controller_time : ")
-		description = input("		description : ")
-		return [name, place, date, nb_of_turns, control_time, description]
+		print(f'{"#"*15} ADD TOURNAMENT')
+		form_values = []
+		name = "name : "
+		place = "place : "
+		date = "date : "
+		nb_of_turns = "nb of turns : "
+		controller_time = "controller time : "
+		description = "description : "
+		lines = [name, place, date, nb_of_turns, controller_time, 
+			description, description]
+		for line in lines:
+			value = input(f'{" "*15} {line}')
+			form_values.append(value)
+		return form_values
 
 	def display_list_players(self, id_list, players):
 		print("		Add players : enter the id of 8 players separated by commas")
@@ -46,7 +50,7 @@ class View:
 		return [name, firstname, birthday, gender, ranking]
 
 	def read_reports(self):
-		print("#"*15 + " Read reports")
+		print(f'{"#"*15} Read reports')
 		text_read_reports = "\n \
 		1 : List of all players\n \
 		2 : List of all tournaments \n \
@@ -54,20 +58,18 @@ class View:
 		print(text_read_reports)
 
 	def reports_tournament(self):
-		print("#"*15 + " tournament reports")
+		print(f'{"#"*15} tournament reports')
 		text_read_reports = "\n \
 		1 : List of all players in a tournament \n \
 		2 : List of all rounds in a tournament \n \
 		q : quit "
 		print(text_read_reports)
 
-
 	def display_list_players(self, players, order_by_name):
-		print("#"*15 + " List of all players \n")
-		print(" "*15 + " Ranking" +" "+"Name"+" "+"Firstname"+" "+"Gender"+" "+"Birthday")
+		print(f'{"#"*15} List of all players \n')
+		print(f'{" "*15} Ranking Name Firstname')
 		for player in players:
-			print("		" + str(player["ranking"]) +" "+ player["name"]
-				+" "+player["firstname"]+ " "+player["gender"]+" "+player["birthday"])
+			print(f'{" "*15} {player["ranking"]} {player["name"]} {player["firstname"]}')
 		if order_by_name == "name":
 			print("\n \
 		2 : order by ranking")
@@ -79,14 +81,13 @@ class View:
 		print("#"*15 + " List of all tournament \n")
 		print(f"{' '*15} Id  Name    Date")
 		for tournament_id, tournament_instance in zip(ids, instances):
-			print(f"		{tournament_id}   {tournament_instance['name']} {tournament_instance['date']}")
+			print(f"{' '*15} {tournament_id}   {tournament_instance['name']} {tournament_instance['date']}")
 
 	def display_tournament(self, instance):
 		print(f"{'#'*15} {instance['name']} \n")
 		for attr in instance:
 			if attr != "rounds" and attr != "players":
 				print(f"{' '*15} {attr} {instance[str(attr)]}")
-		"""Display round and matchs"""
 		print(f"{' '*15} {instance['rounds']['name']}")
 		for match in instance['rounds']['matchs']:
 			player1, player2 = match['match']
@@ -107,9 +108,7 @@ class View:
 		return list_pts
 
 	def error(self, error_list):
-		print("\n \
-		ERROR")
+		print(f'{" "*15} ERROR')
 		for error in error_list:
-			print(error)
-		print("\n \
-			")
+			print(f'{error}')
+		print(end='\n')

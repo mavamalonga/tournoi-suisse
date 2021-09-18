@@ -189,6 +189,21 @@ class Controller(View, Database):
 			View.error(self, error_list)
 			return False
 
+	def transform_matchs_scores_tuple(self, list_points):
+		size_list = len(list_points)
+		index1 = 0
+		index2 = 1
+		new_list = []
+		match = 0
+		while match < size_list/2:
+			score1 = list_points[index1]
+			score2 = list_points[index2]
+			new_list.append((score1, score2))
+			index1 += 2
+			index2 += 2
+			match += 1
+		return new_list
+
 	def pairing_and_add_match(self, instances):
 		instances_order_by_ranking = sorted(instances, key=lambda k: k['ranking'])
 		part_one = instances_order_by_ranking[:4]
@@ -244,7 +259,7 @@ class Controller(View, Database):
 					page = page + next_page
 					View.read_reports(self)
 				else:
-					self.home_page(error_404=True)
+					self.home_page()
 			elif page == "13":
 				if next_page == "1":
 					page = page + next_page
@@ -266,9 +281,10 @@ class Controller(View, Database):
 					print("j'ai pas compris !")
 			elif page == "132":
 				validator_tournament = self.check_select_tournament(next_page)
+				tournament_id = next_page
 				if validator_tournament:
 					page = page + "t"
-					instance = Database.select_from_tournament_table(self, get_instance=True, where_id=next_page)
+					instance = Database.select_from_tournament_table(self, get_instance=True, where_id=tournament_id)
 					View.display_tournament(self, instance)
 				else:
 					pass
@@ -279,8 +295,9 @@ class Controller(View, Database):
 					if validator_convert:
 						validator_points = self.check_points_values(new_list_points)
 						if validator_points:
-							print(new_list_points)
-							#Database.update_match_score(self, new_list_points)
+							new_list_points = self.transform_matchs_scores_tuple(new_list_points)
+							Database.update_match_score(self, tournament_id, new_list_points)
+							exit()
 				elif next_page == "p":
 					pass
 				else:
