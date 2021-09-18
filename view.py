@@ -84,29 +84,27 @@ class View:
 	def tournament_menu(self, instance):
 		print(f"{'#'*15} Tournament {instance['name']} \n")
 		for attr in instance:
-			if attr != "rounds" and attr != "players":
-				print(f"{' '*15} {attr} {instance[str(attr)]}")
-		print(f"{' '*15} {instance['rounds']['name']}")
-		for match in instance['rounds']['matchs']:
-			player1, player2 = match['match']
-			print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
-		print(f"{' '*15} To enter the results press the key 'r'")
-		print(f"{' '*15} To display all the players of the tournament press the key 'p'")
+			if attr != "name" and attr != "rounds" and attr != "players":
+				print(f"{' '*15} {attr} : {instance[str(attr)]}")
+		print(end="\n")
+		a = "1 : List of all players in a tournament"
+		b = "2 : List of all rounds in a tournament"
+		c = "3 : List of all matchs in tournament"
+		d = "q : quit"
+		lines = [a, b, c, d]
+		for line in lines:
+			print(f'{" "*15} {line}')
 
-	
-		"1 : List of all players in a tournament"
-		"2 : List of all rounds in a tournament"
-		"q : quit "
-
-	"""
 	def rounds(self, tournament_instance):
-		print(f"{' '*15} {instance['rounds']['name']}")
-		for match in instance['rounds']['matchs']:
-			player1, player2 = match['match']
-			print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
-		print(f"{' '*15} To enter the results press the key 'r'")
-		print(f"{' '*15} To display all the players of the tournament press the key 'p'")
-	"""
+		for round_instance in tournament_instance['rounds']:
+			print(f"{' '*15} {round_instance['name']}")
+			for match in round_instance['matchs']:
+				player1, player2 = match['match']
+				print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
+			print(f"{' '*15} To enter the results press the key 'r'")
+
+	def match(self,tournament_instance):
+		pass
 
 	def display_form_results(self, instance):
 		print(f"{'#'*15} Results \n")
