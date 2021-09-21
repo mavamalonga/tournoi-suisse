@@ -17,7 +17,7 @@ class Database:
 			"place": place,
 			"date": date,
 			"number_of_turns": number_of_turns,
-			"rounds": rounds,
+			"rounds": [rounds],
 			"players": players,
 			"time_control": time_control,
 			"description": description
@@ -113,26 +113,31 @@ class Database:
 			return None
 
 	def update_match_score(self, tournament_id, list_points):
-		instance = self.select_from_tournament_table(get_instance=True, where_id=tournament_id)
+		tournament_instance = self.select_from_tournament_table(get_instance=True, where_id=tournament_id)
+		round_list = tournament_instance['rounds']
+		latest_round = round_list[-1]
 		update_matchs = []
-		for match, score in zip(instance['rounds']['matchs'], list_points):
-			score_player1, score_player2 = score
+
+		for match, score in zip(latest_round['matchs'], list_points):
 			instance_player1 = match['match'][0][0]
 			instance_player2 = match['match'][1][0]
+			score_player1, score_player2 = score
 			match['match'][0][1] = score_player1
 			match['match'][1][1] = score_player2
 			update_matchs.append({'match':([instance_player1, match['match'][0][1]], 
 				[instance_player2, match['match'][1][1]])})
 
 		update_round = {
-			"name": instance['rounds']['name'],
-			"start_date": instance['rounds']['start_date'],
+			"name": latest_round['name'],
+			"start_date": latest_round['start_date'],
 			"end_date": datetime.now().strftime("%d/%m/%Y/%H %H:%M:%S"),
 			"matchs": update_matchs
 		}
-
-		self.tournament_table.update({'rounds': update_round }, doc_ids=[int(tournament_id)])
-
+		
+		del round_list[-1]
+		round_list.append(update_round)
+		self.tournament_table.update({'rounds': round_list }, doc_ids=[int(tournament_id)])
+		
 	def drop_table(self, table):
 		self.db.drop_table(table)
 

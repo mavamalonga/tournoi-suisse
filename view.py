@@ -74,6 +74,12 @@ class View:
 			print("\n \
 		1 : order by name")
 
+	def display_tournament_players(self, player_instance):
+		print(f'{"#"*15} List of all players in a tournament\n')
+		print(f'{" "*15} Name Firstname Gender')
+		for player in player_instance:
+			print(f'{" "*15} {player["name"]} {player["firstname"]} {player["gender"]}')
+
 	def display_list_tournaments(self, ids, instances):
 		print("#"*15 + " List of all tournament \n")
 		print(f"{' '*15} Id  Name    Date")
@@ -95,21 +101,27 @@ class View:
 		for line in lines:
 			print(f'{" "*15} {line}')
 
-	def rounds(self, tournament_instance):
-		for round_instance in tournament_instance['rounds']:
+	def display_rounds(self, round_list):
+		print(f"{'#'*15} List of all rounds in a tournament \n")
+		for round_instance in round_list:
 			print(f"{' '*15} {round_instance['name']}")
 			for match in round_instance['matchs']:
 				player1, player2 = match['match']
 				print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
 			print(f"{' '*15} To enter the results press the key 'r'")
 
-	def match(self,tournament_instance):
-		pass
+	def display_matchs(self, round_list):
+		print(f"{'#'*15} List of all matchs in tournament \n")
+		for round_instance in round_list:
+			for match in round_instance['matchs']:
+				player1, player2 = match['match']
+				print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
 
-	def display_form_results(self, instance):
+	def display_form_results(self, round_list):
+		latest_round = round_list[-1]
 		print(f"{'#'*15} Results \n")
 		list_pts = []
-		for match in instance['rounds']['matchs']:
+		for match in latest_round['matchs']:
 			player1, player2 = match['match']
 			print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
 			pts = input(f"{' '*20} {player1[0]['name']} points : ")

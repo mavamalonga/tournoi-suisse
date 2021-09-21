@@ -289,19 +289,31 @@ class Controller(View, Database):
 				else:
 					pass
 			elif page == "132t":
-				if next_page == "r":
-					list_points = View.display_form_results(self, instance)
+				if next_page == "1":
+					player_instance = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'])
+					View.display_tournament_players(self, player_instance)
+				elif next_page == "2":
+					page = page + next_page
+					View.display_rounds(self, instance['rounds'])
+				elif next_page == "3":
+					View.display_matchs(self, instance['rounds'])
+				else:
+					print("j'ai pas compris")
+			elif page == '132t2':
+				if next_page == 'r':
+					list_points = View.display_form_results(self, instance['rounds'])
 					validator_convert, new_list_points = self.convert_points(list_points)
 					if validator_convert:
 						validator_points = self.check_points_values(new_list_points)
 						if validator_points:
 							new_list_points = self.transform_matchs_scores_tuple(new_list_points)
 							Database.update_match_score(self, tournament_id, new_list_points)
-							exit()
-				elif next_page == "p":
-					pass
+						else:
+							pass
+					else:
+						pass
 				else:
-					print("j'ai pas compris")
+					pass
 			else:
 				pass
 
