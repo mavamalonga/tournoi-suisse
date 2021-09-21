@@ -62,9 +62,11 @@ class View:
 		ids = input(f'{" "*15} Choice ids : ')
 		return ids
 
-	def display_list_players(self, players, order_by_name):
-		print(f'{"#"*15} List of all players \n')
-		print(f'{" "*15} Ranking Name Firstname')
+	def display_list_players(self, players, page_1=True, order_by_name="name"):
+		if page_1:
+			print(f'{"#"*15} List of all players \n')
+		else:
+			print(f'{"#"*15} List of all players in a tournament\n')
 		for player in players:
 			print(f'{" "*15} {player["ranking"]} {player["name"]} {player["firstname"]}')
 		if order_by_name == "name":
@@ -73,12 +75,6 @@ class View:
 		else:
 			print("\n \
 		1 : order by name")
-
-	def display_tournament_players(self, player_instance):
-		print(f'{"#"*15} List of all players in a tournament\n')
-		print(f'{" "*15} Name Firstname Gender')
-		for player in player_instance:
-			print(f'{" "*15} {player["name"]} {player["firstname"]} {player["gender"]}')
 
 	def display_list_tournaments(self, ids, instances):
 		print("#"*15 + " List of all tournament \n")

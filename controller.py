@@ -206,8 +206,9 @@ class Controller(View, Database):
 
 	def pairing_and_add_match(self, instances):
 		instances_order_by_ranking = sorted(instances, key=lambda k: k['ranking'])
-		part_one = instances_order_by_ranking[:4]
-		part_two = instances_order_by_ranking[4:]
+		nb_players = len(instances_order_by_ranking)
+		part_one = instances_order_by_ranking[:nb_players/2]
+		part_two = instances_order_by_ranking[nb_players/2:]
 		match_list = []
 		for player1, player2 in zip(part_one, part_two):
 			match_id = Database.add_match(self, player1, player2)
@@ -264,7 +265,7 @@ class Controller(View, Database):
 				if next_page == "1":
 					page = page + next_page
 					players = Database.select_from_player_table(self, get_instance=True, order_by_name="name")
-					View.display_list_players(self, players, order_by_name="name")
+					View.display_list_players(self,  players, page_1=True, order_by_name="name")
 				elif next_page == "2":
 					page = page + next_page
 					ids, instances = Database.select_from_tournament_table(self, 
@@ -273,10 +274,10 @@ class Controller(View, Database):
 			elif page == "131":
 				if next_page == "1":
 					players = Database.select_from_player_table(self, get_instance=True, order_by_name="name")
-					View.display_list_players(self, players, order_by_name="name")
+					View.display_list_players(self,  players, page_1=True, order_by_name="name")
 				elif next_page == "2":
 					players = Database.select_from_player_table(self, get_instance=True, order_by_name="ranking")
-					View.display_list_players(self, players, order_by_name="ranking")
+					View.display_list_players(self, players, page_1=True, order_by_name="ranking")
 				else:
 					print("j'ai pas compris !")
 			elif page == "132":
@@ -290,8 +291,13 @@ class Controller(View, Database):
 					pass
 			elif page == "132t":
 				if next_page == "1":
-					player_instance = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'])
-					View.display_tournament_players(self, player_instance)
+					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'], 
+						order_by_name="name")
+					View.display_list_players(self, players, page_1=False, order_by_name="name")
+				elif next_page == "2":
+					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'],
+						order_by_name="ranking")
+					View.display_list_players(self, players, page_1=False, order_by_name="ranking")
 				elif next_page == "2":
 					page = page + next_page
 					View.display_rounds(self, instance['rounds'])
@@ -308,6 +314,11 @@ class Controller(View, Database):
 						if validator_points:
 							new_list_points = self.transform_matchs_scores_tuple(new_list_points)
 							Database.update_match_score(self, tournament_id, new_list_points)
+							# Generate new matchs
+								# instance de jouer
+								# classement 
+								# pairing 
+							# add  round 
 						else:
 							pass
 					else:

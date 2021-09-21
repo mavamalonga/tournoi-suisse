@@ -94,6 +94,11 @@ class Database:
 			for player_id in where_id:
 				player_instance = self.player_table.get(doc_id = int(player_id))
 				instances.append(player_instance)
+		elif get_instance == True and where_id!=None and order_by_name!=None:
+			if order_by_name == "name":
+				instances = sorted(instances, key=lambda k: k['name'])
+			else:
+				instances = sorted(instances, key=lambda k: k['ranking'])
 			return instances
 
 	def remove_from_player_table(self, player_id):
@@ -133,10 +138,11 @@ class Database:
 			"end_date": datetime.now().strftime("%d/%m/%Y/%H %H:%M:%S"),
 			"matchs": update_matchs
 		}
-		
+
 		del round_list[-1]
 		round_list.append(update_round)
 		self.tournament_table.update({'rounds': round_list }, doc_ids=[int(tournament_id)])
+		return update_round
 		
 	def drop_table(self, table):
 		self.db.drop_table(table)
