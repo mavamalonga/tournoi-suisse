@@ -94,6 +94,7 @@ class Database:
 			for player_id in where_id:
 				player_instance = self.player_table.get(doc_id = int(player_id))
 				instances.append(player_instance)
+			return instances
 		elif get_instance == True and where_id!=None and order_by_name!=None:
 			if order_by_name == "name":
 				instances = sorted(instances, key=lambda k: k['name'])
@@ -142,7 +143,7 @@ class Database:
 		del round_list[-1]
 		round_list.append(update_round)
 		self.tournament_table.update({'rounds': round_list }, doc_ids=[int(tournament_id)])
-		return update_round
+		return update_matchs
 		
 	def drop_table(self, table):
 		self.db.drop_table(table)

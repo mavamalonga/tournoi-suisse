@@ -204,16 +204,37 @@ class Controller(View, Database):
 			match += 1
 		return new_list
 
-	def pairing_and_add_match(self, instances):
-		instances_order_by_ranking = sorted(instances, key=lambda k: k['ranking'])
-		nb_players = len(instances_order_by_ranking)
-		part_one = instances_order_by_ranking[:nb_players/2]
-		part_two = instances_order_by_ranking[nb_players/2:]
+	def pairing_and_add_match(self, instances, first_round=True):
+		winner =[]
+		looser =[]
+		zero =[]
 		match_list = []
-		for player1, player2 in zip(part_one, part_two):
-			match_id = Database.add_match(self, player1, player2)
-			match_list.append(match_id)
-		return match_list
+
+		if first_round != True:
+			for match in instances:
+				player1, player2 = match['match']
+				if int(player1[1]) > int(player2[1]):
+					winner.append(player1[0])
+					looser.append(player2[0])
+				elif player1[1] == player2[1]:
+					zero.append(player1[0])
+					zero.append(player2[0])
+				else:
+					winner.append(player2[0])
+					looser.append(player1[0])
+			winner = sorted(winner, key=lambda k: k['ranking'])
+			looser = sorted(looser, key=lambda k: k['ranking'])
+			zero = sorted(zero, key=lambda k: k['ranking'])
+			instances = winner + zero + looser
+		else:
+			instances = sorted(instances, key=lambda k: k['ranking'])
+			part_one = instances[:nb_players//2]
+			part_two = instances[nb_players//2:]
+		
+			for player1, player2 in zip(part_one, part_two):
+				match_id = Database.add_match(self, player1, player2)
+				match_list.append(match_id)
+			return match_list
 
 	def main(self):
 		page = "1" #Home page
@@ -235,7 +256,7 @@ class Controller(View, Database):
 							instances = Database.select_from_player_table(self, get_instance=True, where_id=selection_of_players)
 							validator_instances = self.check_instances_players(selection_of_players, instances)
 							if validator_instances:
-								list_match_id = self.pairing_and_add_match(instances)
+								list_match_id = self.pairing_and_add_match(instances, first_round=True)
 								list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
 								round_id = Database.add_round(self, list_match_instance, name="Round 1", status="in progress")
 								round_instance = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
@@ -291,13 +312,10 @@ class Controller(View, Database):
 					pass
 			elif page == "132t":
 				if next_page == "1":
+					page = page + next_page
 					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'], 
 						order_by_name="name")
 					View.display_list_players(self, players, page_1=False, order_by_name="name")
-				elif next_page == "2":
-					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'],
-						order_by_name="ranking")
-					View.display_list_players(self, players, page_1=False, order_by_name="ranking")
 				elif next_page == "2":
 					page = page + next_page
 					View.display_rounds(self, instance['rounds'])
@@ -305,6 +323,16 @@ class Controller(View, Database):
 					View.display_matchs(self, instance['rounds'])
 				else:
 					print("j'ai pas compris")
+			elif page == "132t1":
+				if next_page == "1":
+					page = page + next_page
+					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'], 
+					order_by_name="name")
+					View.display_list_players(self, players, page_1=False, order_by_name="name")
+				elif next_page == "2":
+					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'],
+						order_by_name="ranking")
+					View.display_list_players(self, players, page_1=False, order_by_name="ranking")
 			elif page == '132t2':
 				if next_page == 'r':
 					list_points = View.display_form_results(self, instance['rounds'])
@@ -313,7 +341,8 @@ class Controller(View, Database):
 						validator_points = self.check_points_values(new_list_points)
 						if validator_points:
 							new_list_points = self.transform_matchs_scores_tuple(new_list_points)
-							Database.update_match_score(self, tournament_id, new_list_points)
+							update_matchs = Database.update_match_score(self, tournament_id, new_list_points)
+							self.pairing_and_add_match(update_matchs, first_round=False)
 							# Generate new matchs
 								# instance de jouer
 								# classement 
