@@ -101,6 +101,9 @@ class View:
 		print(f"{'#'*15} List of all rounds in a tournament \n")
 		for round_instance in round_list:
 			print(f"{' '*15} {round_instance['name']}")
+			print(f"{' '*15} {round_instance['start_date']}")
+			print(f"{' '*15} {round_instance['end_date']}")
+
 			for match in round_instance['matchs']:
 				player1, player2 = match['match']
 				print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")

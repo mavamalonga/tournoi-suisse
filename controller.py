@@ -231,6 +231,8 @@ class Controller(View, Database):
 		return instances
 
 	def pairing_add_match(self, instances):
+		match_list = []
+		nb_players = len(instances)
 		part_one = instances[:nb_players//2]
 		part_two = instances[nb_players//2:]
 		
@@ -259,7 +261,7 @@ class Controller(View, Database):
 							instances = Database.select_from_player_table(self, get_instance=True, where_id=selection_of_players)
 							validator_instances = self.check_instances_players(selection_of_players, instances)
 							if validator_instances:
-								instances = self.round_classification(first_round=True)
+								instances = self.round_classification(instances, first_round=True)
 								list_match_id = self.pairing_add_match(instances)
 								list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
 								round_id = Database.add_round(self, list_match_instance, name="Round 1", status="in progress")
@@ -348,11 +350,15 @@ class Controller(View, Database):
 							update_matchs = Database.update_match_score(self, tournament_id, new_list_points)
 							instances = self.round_classification(update_matchs, first_round=False)
 							list_match_id = self.pairing_add_match(instances)
-							# Generate new matchs
-								# instance de jouer
-								# classement 
-								# pairing 
-							# add  round 
+							### for round 1 and round 2
+							list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
+							round_id = Database.add_round(self, list_match_instance)
+							round_instance = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
+							"""
+							add round in tournament instance
+							add new method update round tournament
+							"""
+							Database.update_round_tournament(self, tournament_id, round_instance)
 						else:
 							pass
 					else:

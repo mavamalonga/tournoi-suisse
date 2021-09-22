@@ -51,10 +51,10 @@ class Database:
 				match_list.append(match_instance)
 			return match_list
 
-	def add_round(self, match_list, name, status="In progress"):
+	def add_round(self, match_list):
+		name = input(" round name : ")
 		Round = {
 			"name": name,
-			"status": status,
 			"start_date": datetime.now().strftime("%d/%m/%Y/%H %H:%M:%S"),
 			"end_date": "NA",
 			"matchs": match_list
@@ -144,7 +144,14 @@ class Database:
 		round_list.append(update_round)
 		self.tournament_table.update({'rounds': round_list }, doc_ids=[int(tournament_id)])
 		return update_matchs
-		
+
+	def update_tournament_round(self, tournament_id, round_instance):
+		tournament_instance = self.select_from_tournament_table(get_instance=True, where_id=int(tournament_id))
+		round_list = tournament_instance['rounds']
+		round_list.append(round_instance)
+		self.tournament_table.update({'rounds': round_list }, doc_ids=[int(tournament_id)])
+
+
 	def drop_table(self, table):
 		self.db.drop_table(table)
 
