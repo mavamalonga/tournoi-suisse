@@ -134,6 +134,11 @@ class View:
 			list_pts.append(pts)
 		return list_pts
 
+	def form_modify_ranking(self):
+		name = input(f'{" "*15} name of player : ')
+		ranking = input(f'{" "*15} new ranking : ')
+		return name, ranking
+
 	def error(self, error_list):
 		print(f'{" "*15} ERROR')
 		for error in error_list:

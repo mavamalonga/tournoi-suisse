@@ -241,6 +241,28 @@ class Controller(View, Database):
 			match_list.append(match_id)
 		return match_list
 
+	def check_modify_ranking(self, name, ranking):
+		error_list = []
+		instances = Database.search_player(self, name)
+
+		try:
+			int(ranking)
+		except Exception as e:
+			ranking_error = "		- ranking must only contain integers"
+			error_list.append(ranking_error)
+
+		if len(instances) != 0:
+			Database.from_player_table_update_ranking(self, ranking, where_id=player_id)
+		else:
+			name_error = f'		- there is no user with the name {name}'
+			error_list.append(name_error)
+
+		if len(error_list) == 0:
+			return True
+		else:
+			View.error(self, error_list)
+			return False
+
 	def main(self):
 		page = "1" #Home page
 		self.home_page()
@@ -322,12 +344,6 @@ class Controller(View, Database):
 					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'], 
 						order_by_name="name")
 					View.display_list_players(self, players, page_1=False, order_by_name="name")
-					# select_players 
-					# display players
-					# usr select player 
-					# usr enter ranking
-					# check value 
-					# update ranking value 
 				elif next_page == "2":
 					page = page + next_page
 					View.display_rounds(self, instance['rounds'])
@@ -338,6 +354,7 @@ class Controller(View, Database):
 			elif page == "132t1":
 				if next_page == "1":
 					page = page + next_page
+					# attention player tournament
 					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'], 
 					order_by_name="name")
 					View.display_list_players(self, players, page_1=False, order_by_name="name")
@@ -345,6 +362,24 @@ class Controller(View, Database):
 					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'],
 						order_by_name="ranking")
 					View.display_list_players(self, players, page_1=False, order_by_name="ranking")
+				elif next_page == "3":
+					name, ranking = View.form_modify_ranking(self)
+					validator_modify_ranking = self.check_modify_ranking(name, ranking)
+					print(validator_modify_ranking)
+					exit()
+					"""
+					if validator_modify_ranking:
+						#update player ranking
+
+					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'], 
+					order_by_name="name")
+					# select_players 
+					# display players
+					# usr select player 
+					# usr enter ranking
+					# check value 
+					# update ranking value 
+					"""
 			elif page == '132t2':
 				if next_page == 'r':
 					list_points = View.display_form_results(self, instance['rounds'])

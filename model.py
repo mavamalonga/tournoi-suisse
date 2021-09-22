@@ -105,6 +105,11 @@ class Database:
 	def remove_from_player_table(self, player_id):
 		self.player_table.remove(doc_id=player_id)
 
+	def search_player(self, name):
+		Player = self.Query
+		instances = self.player_table.search(Player.name == name)
+		return instances
+
 	def select_from_tournament_table(self, get_id=None, get_instance=None, where_id=None):
 		if get_id == True and get_instance == True and where_id == None:
 			tournament_ids = []
