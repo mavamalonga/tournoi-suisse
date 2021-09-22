@@ -264,7 +264,7 @@ class Controller(View, Database):
 								instances = self.round_classification(instances, first_round=True)
 								list_match_id = self.pairing_add_match(instances)
 								list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
-								round_id = Database.add_round(self, list_match_instance, name="Round 1", status="in progress")
+								round_id = Database.add_round(self, list_match_instance)
 								round_instance = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
 								Database.add_tournament(self, tournament_values[0], tournament_values[1], tournament_values[2],
 									tournament_values[3], round_instance[0], selection_of_players, tournament_values[4], tournament_values[5])
@@ -322,6 +322,12 @@ class Controller(View, Database):
 					players = Database.select_from_player_table(self, get_instance=True, where_id=instance['players'], 
 						order_by_name="name")
 					View.display_list_players(self, players, page_1=False, order_by_name="name")
+					# select_players 
+					# display players
+					# usr select player 
+					# usr enter ranking
+					# check value 
+					# update ranking value 
 				elif next_page == "2":
 					page = page + next_page
 					View.display_rounds(self, instance['rounds'])
@@ -350,15 +356,10 @@ class Controller(View, Database):
 							update_matchs = Database.update_match_score(self, tournament_id, new_list_points)
 							instances = self.round_classification(update_matchs, first_round=False)
 							list_match_id = self.pairing_add_match(instances)
-							### for round 1 and round 2
 							list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
 							round_id = Database.add_round(self, list_match_instance)
-							round_instance = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
-							"""
-							add round in tournament instance
-							add new method update round tournament
-							"""
-							Database.update_round_tournament(self, tournament_id, round_instance)
+							round_instances = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
+							Database.update_tournament_round(self, tournament_id, round_instances[0])
 						else:
 							pass
 					else:

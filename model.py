@@ -52,7 +52,7 @@ class Database:
 			return match_list
 
 	def add_round(self, match_list):
-		name = input(" round name : ")
+		name = input(" Round name : ")
 		Round = {
 			"name": name,
 			"start_date": datetime.now().strftime("%d/%m/%Y/%H %H:%M:%S"),

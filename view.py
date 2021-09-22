@@ -63,18 +63,24 @@ class View:
 		return ids
 
 	def display_list_players(self, players, page_1=True, order_by_name="name"):
+		"""Header"""
 		if page_1:
 			print(f'{"#"*15} List of all players \n')
 		else:
 			print(f'{"#"*15} List of all players in a tournament\n')
+		"""Body"""
+		print(f'{" "*15} Ranking {" "*3}Name Firstname')
 		for player in players:
-			print(f'{" "*15} {player["ranking"]} {player["name"]} {player["firstname"]}')
+			print(f'{" "*15} {player["ranking"]}{" "*10}{player["name"]} {player["firstname"]}')
+		"""Footer"""
 		if order_by_name == "name":
 			print("\n \
 		2 : order by ranking")
 		else:
 			print("\n \
 		1 : order by name")
+		if page_1 == False:
+			print(f'{" "*15} 3 : Modify player"s ranking')
 
 	def display_list_tournaments(self, ids, instances):
 		print("#"*15 + " List of all tournament \n")
@@ -82,7 +88,6 @@ class View:
 		for tournament_id, tournament_instance in zip(ids, instances):
 			print(f"{' '*15} {tournament_id}   {tournament_instance['name']} {tournament_instance['date']}")
 
-	#display_tournament => tournament_menu
 	def tournament_menu(self, instance):
 		print(f"{'#'*15} Tournament {instance['name']} \n")
 		for attr in instance:
@@ -101,13 +106,13 @@ class View:
 		print(f"{'#'*15} List of all rounds in a tournament \n")
 		for round_instance in round_list:
 			print(f"{' '*15} {round_instance['name']}")
-			print(f"{' '*15} {round_instance['start_date']}")
-			print(f"{' '*15} {round_instance['end_date']}")
-
+			print(f"{' '*15}  Start : {round_instance['start_date']}")
+			print(f"{' '*15}  End : {round_instance['end_date']}")
 			for match in round_instance['matchs']:
 				player1, player2 = match['match']
 				print(f"{' '*20} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
-			print(f"{' '*15} To enter the results press the key 'r'")
+			print(f'{" "} \n')
+		print(f"{' '*15} To enter the results press the key 'r'")
 
 	def display_matchs(self, round_list):
 		print(f"{'#'*15} List of all matchs in tournament \n")
