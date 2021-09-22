@@ -204,13 +204,15 @@ class Controller(View, Database):
 			match += 1
 		return new_list
 
-	def pairing_and_add_match(self, instances, first_round=True):
+	def round_classification(self, instances, first_round=True):
 		winner =[]
 		looser =[]
 		zero =[]
 		match_list = []
 
-		if first_round != True:
+		if first_round == True:
+			instances = sorted(instances, key=lambda k: k['ranking'])
+		else:
 			for match in instances:
 				player1, player2 = match['match']
 				if int(player1[1]) > int(player2[1]):
@@ -226,15 +228,16 @@ class Controller(View, Database):
 			looser = sorted(looser, key=lambda k: k['ranking'])
 			zero = sorted(zero, key=lambda k: k['ranking'])
 			instances = winner + zero + looser
-		else:
-			instances = sorted(instances, key=lambda k: k['ranking'])
-			part_one = instances[:nb_players//2]
-			part_two = instances[nb_players//2:]
+		return instances
+
+	def pairing_add_match(self, instances):
+		part_one = instances[:nb_players//2]
+		part_two = instances[nb_players//2:]
 		
-			for player1, player2 in zip(part_one, part_two):
-				match_id = Database.add_match(self, player1, player2)
-				match_list.append(match_id)
-			return match_list
+		for player1, player2 in zip(part_one, part_two):
+			match_id = Database.add_match(self, player1, player2)
+			match_list.append(match_id)
+		return match_list
 
 	def main(self):
 		page = "1" #Home page
@@ -256,7 +259,8 @@ class Controller(View, Database):
 							instances = Database.select_from_player_table(self, get_instance=True, where_id=selection_of_players)
 							validator_instances = self.check_instances_players(selection_of_players, instances)
 							if validator_instances:
-								list_match_id = self.pairing_and_add_match(instances, first_round=True)
+								instances = self.round_classification(first_round=True)
+								list_match_id = self.pairing_add_match(instances)
 								list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
 								round_id = Database.add_round(self, list_match_instance, name="Round 1", status="in progress")
 								round_instance = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
@@ -342,7 +346,8 @@ class Controller(View, Database):
 						if validator_points:
 							new_list_points = self.transform_matchs_scores_tuple(new_list_points)
 							update_matchs = Database.update_match_score(self, tournament_id, new_list_points)
-							self.pairing_and_add_match(update_matchs, first_round=False)
+							instances = self.round_classification(update_matchs, first_round=False)
+							list_match_id = self.pairing_add_match(instances)
 							# Generate new matchs
 								# instance de jouer
 								# classement 
