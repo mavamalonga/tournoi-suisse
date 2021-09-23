@@ -52,7 +52,7 @@ class Database:
 			return match_list
 
 	def add_round(self, match_list):
-		name = input(" Round name : ")
+		name = input(f'{" "*60} Round name : ')
 		Round = {
 			"name": name,
 			"start_date": datetime.now().strftime("%d/%m/%Y/%H %H:%M:%S"),
@@ -70,9 +70,6 @@ class Database:
 				round_instance = self.round_table.get(doc_id = round_id)
 				round_instances.append(round_instance)
 		return round_instances
-
-	def update_ranking(self, ranking, player_id): #player_id list
-		self.player_table.update({'ranking': ranking}, doc_ids=player_id)
 
 	def select_from_player_table(self, get_id=None, get_instance=None, where_id=None, order_by_name=None):
 		"""toutes les requêtes select sur la table player"""
@@ -105,10 +102,13 @@ class Database:
 	def remove_from_player_table(self, player_id):
 		self.player_table.remove(doc_id=player_id)
 
-	def search_player(self, name):
+	def from_player_table_search_player(self, name):
 		Player = self.Query
 		instances = self.player_table.search(Player.name == name)
 		return instances
+
+	def from_player_table_update_ranking(self, ranking, player_id):
+		self.player_table.update({'ranking': int(ranking)}, doc_ids=player_id)
 
 	def select_from_tournament_table(self, get_id=None, get_instance=None, where_id=None):
 		if get_id == True and get_instance == True and where_id == None:
