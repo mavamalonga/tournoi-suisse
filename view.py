@@ -58,7 +58,7 @@ class View:
 		print(f'{" "*60} Add players : enter the id of 8 players separated by commas')
 		print(f'{" "*60} Id  Firstname  Name  Gender  Birthday')
 		for player_id, player_instance in zip(id_list, instances):
-			print(f'{" "*65} {player_id} {player_instance["firstname"]} {player_instance["name"]}')
+			print(f'{" "*62} {player_id} {player_instance["firstname"]} {player_instance["name"]}')
 		ids = input(f'{" "*60} Choice ids : ')
 		return ids
 
@@ -111,7 +111,10 @@ class View:
 				player1, player2 = match['match']
 				print(f"{' '*65} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
 			print(f'{" "} \n')
-		print(f"{' '*65} To enter the results press the key 'r'")
+		if len(round_list) == 7 and round_list[-1]['end_date'] != None:
+			print(f"{' '*65}Tournament ended on {round_list[-1]['end_date']}")
+		else:
+			print(f"{' '*65} To enter the results press the key 'r'")
 
 	def display_matchs(self, round_list):
 		print(f"{' '*60} LIST OF ALL MATCHS IN TOURNAMENT")

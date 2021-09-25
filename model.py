@@ -52,11 +52,11 @@ class Database:
 			return match_list
 
 	def add_round(self, match_list):
-		name = input(f'{" "*60} Round name : ')
+		name = input(f'{" "*60} New round name : ')
 		Round = {
 			"name": name,
 			"start_date": datetime.now().strftime("%d/%m/%Y/%H %H:%M:%S"),
-			"end_date": "NA",
+			"end_date": None,
 			"matchs": match_list
 		}
 		round_id = self.round_table.insert(Round)

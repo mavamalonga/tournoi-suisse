@@ -1,18 +1,9 @@
+def factorial_recursive(n):
+	if n == 1:
+		return 1
+	else:
+		return n * factorial_recursive(n-1)
 
 
-class Urls:
-
-	def func(self):
-		return 1 + 1
-
-f = Urls()
-
-dic = {
-	"1": f.func(),
-	"2": "Seconde"
-}
-
-for x in dic:
-	a = dic[x]
-	print(a)
-
+r = factorial_recursive(5)
+print(r)

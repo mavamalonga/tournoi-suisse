@@ -211,16 +211,56 @@ class Controller(View, Database):
 			instances = winner + zero + looser
 		return instances
 
-	def pairing_add_match(self, instances):
-		match_list = []
-		nb_players = len(instances)
-		part_one = instances[:nb_players//2]
-		part_two = instances[nb_players//2:]
-		
-		for player1, player2 in zip(part_one, part_two):
-			match_id = Database.add_match(self, player1, player2)
-			match_list.append(match_id)
-		return match_list
+	def pairing_add_match(self, instances, first_round=True, round_list=None):
+		matchs = []
+		if first_round == True:
+			nb_players = len(instances)
+			part_one = instances[:nb_players//2]
+			part_two = instances[nb_players//2:]
+			for player1, player2 in zip(part_one, part_two):
+				match_id = Database.add_match(self, player1, player2)
+				matchs.append(match_id)
+		else:
+			dict_1 = {}
+			dict_2 = {}
+			for player in instances:
+				p = {player['name']: player}
+				dict_1.update(p)
+				dict_2.update(p)
+
+			for i in range(4):
+				name1, name2 = self.check_pairings(dict_1, dict_2, round_list)
+				match_id = Database.add_match(self, dict_1[name1], dict_2[name2])
+				matchs.append(match_id)
+				del dict_1[name1]
+				del dict_1[name2]
+				del dict_2[name1]
+				del dict_2[name2]
+		return matchs
+
+	def check_pairings(self, dict_1, dict_2, round_list):
+		for key1_name in dict_1:
+			player1 = dict_1[key1_name]
+			for key2_name in dict_2:
+				player2 = dict_2[key2_name]
+				if self.check_match_exits(player1['name'], player2['name'], round_list):
+					continue
+				else:
+					return player1['name'], player2['name']
+
+	"""check if the match already exists"""
+	def check_match_exits(self, player1_name, player2_name, round_list):
+		for round_instance in round_list:
+			for match in round_instance['matchs']:
+				player1, player2 = match['match']
+				if player1_name == player1[0]['name'] or player2[0]['name'] == player1_name:
+					if player2_name == player1[0]['name'] or player2[0]['name'] == player2_name:
+						return True
+					else:
+						pass
+				else:
+					pass
+		return False
 
 	def check_modify_ranking(self, name, ranking):
 		error_list = []
@@ -257,7 +297,7 @@ class Controller(View, Database):
 				validator_instances = self.check_instances_players(selection_of_players, instances)
 				if validator_instances:
 					instances = self.round_classification(instances, first_round=True)
-					list_match_id = self.pairing_add_match(instances)
+					list_match_id = self.pairing_add_match(instances, first_round=True, round_list=None)
 					list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
 					round_id = Database.add_round(self, list_match_instance)
 					round_instance = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
@@ -275,7 +315,7 @@ class Controller(View, Database):
 			add_again = input(f'{" "*45}Add again ? yes/not : ')
 		View.home_page(self)
 
-	def path_upgrade_results(self, instance):
+	def path_upgrade_results(self, tournament_id, instance):
 		list_points = View.display_form_results(self, instance['rounds'])
 		validator_convert, new_list_points = self.convert_points(list_points)
 		if validator_convert:
@@ -283,18 +323,20 @@ class Controller(View, Database):
 			if validator_points:
 				new_list_points = self.transform_matchs_scores_tuple(new_list_points)
 				update_matchs = Database.update_match_score(self, tournament_id, new_list_points)
-				instances = self.round_classification(update_matchs, first_round=False)
-				list_match_id = self.pairing_add_match(instances)
-				list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
-				round_id = Database.add_round(self, list_match_instance)
-				round_instances = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
-				Database.update_tournament_round(self, tournament_id, round_instances[0])
+				if len(instance['rounds']) <= 7:
+					instances_order = self.round_classification(update_matchs, first_round=False)
+					list_match_id = self.pairing_add_match(instances_order, first_round=False, round_list=instance['rounds'])
+					list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
+					round_id = Database.add_round(self, list_match_instance)
+					round_instances = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
+					Database.update_tournament_round(self, tournament_id, round_instances[0])
+				else:
+					pass
 
 	def main(self):
 		page = "1"
 		View.home_page(self)
 		while True:
-			print(page)
 			next_page = input(f'{" "*45} Next page : ')
 			if next_page.lower() == "e":
 				exit()
@@ -365,7 +407,7 @@ class Controller(View, Database):
 					validator_modify_ranking = self.check_modify_ranking(name, ranking)
 			elif page == '132t2':
 				if next_page == 'r':
-					self.path_upgrade_results(instance)
+					self.path_upgrade_results(tournament_id, instance)
 					View.home_page(self)
 				else:
 					pass

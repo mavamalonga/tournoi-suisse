@@ -1,7 +1,7 @@
 def main(self):
 
 	Urls = {
-		"1": ([View.home_page(self)],["1", "2", "3"]),
+		"1": ([Controller.home_page(self)],["1", "2", "3"]),
 		"11": ([Controller.patch_add_tournament(self)], ["1", "e"]),
 		"12": ([Controller.path_add_player(self)], ["1", "e"]),
 		"13": ([Controller.path_reports(self)], ["1", "131", "132", "e"]),
@@ -13,14 +13,29 @@ def main(self):
 		"132t2": ([Controller.path_rounds(self)], ["132t", "132t2r", "e"]),
 		"132t3": ([Controller.path_matchs(self)], ["132t", "e"])
 	}
-	page = View.home_page(self) # page = "1"
+
+def check_next_page(self, next_page, list_next_pages):
+	for url in list_next_pages:
+		if next_page == url:
+			return True
+		else:
+			return False
+
+def run(self):
+
+	page = Controller.home_page(self) # page = "1"
 	while True:
 		next_page = input(f'{" "*45} Next page : ')
-		for   in Urls:
-			if next_page == "e":
-				exit()
-			elif next_page == url:
-				Urls[next_page]
+		for url in Urls:
+			if page == url:
+				list_next_pages = Urls[url][1][0]
+				validator = check_next_page(next_page, list_next_pages)
+				if validator:
+					page = Urls[next_page]
+				else:
+					# page not found
+			else:
+				# page not found
 
 
 
