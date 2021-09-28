@@ -5,6 +5,7 @@ class View:
 		pass
 
 	def home_page(self):
+		page = "1"
 		print(f'{" "*60} HOME')
 		a = "1 : Add new tournament"
 		b = "2 : Add new player"
@@ -13,6 +14,7 @@ class View:
 		lines = [a, b, c, d]
 		for line in lines:
 			print(f'{" "*60} {line}')
+		return page, None
 		
 	def form_add_tournament(self):
 		print(f'{" "*60} ADD TOURNAMENT')

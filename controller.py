@@ -3,58 +3,10 @@ from model import Database
 from view import View
 import os
 
-class Controller(View, Database):
+class Controller(Database, View):
 	def __init__(self):
 		View.__init__(self)
 		Database.__init__(self)
-
-	def check_errors(self, error_list):
-		if len(error_list) == 0:
-			return True
-		else:
-			View.error(self, error_list)
-			return False
-
-	def check_form_add_tournament(self, tournement):
-		error_list = []
-		if len(tournement[0]) < 2 or len(tournement[0]) > 16:
-			name_error = "the name must contain between 2 to 16 characters."
-			error_list.append(name_error)
-		if len(tournement[1]) < 8 or len(tournement[1]) > 66:
-			place_error = "the place value must contain between 8 to 66 characters."
-			error_list.append(place_error)
-		if len(tournement[2]) != 10:
-			date_error = "the date format is incorrect."
-			error_list.append(date_error)
-		else:
-			try:
-				date = tournement[2].split("/")
-				for nb in date:
-					try:
-						int(nb)
-					except Exception as e:
-						date_error = "date must only contain integers"
-						error_list.append(date_error)
-			except Exception as e:
-				date_error = "the date format is incorrect."
-				error_list.append(date_error)
-
-		try:
-			int(tournement[3])
-		except Exception as e:
-			nb_of_turns = "nb of turns must only contain integers"
-			error_list.append(nb_of_turns)
-
-		if tournement[4].lower() != "bullet" and tournement[4].lower() != "blitz" and tournement[4].lower() != "rapide":
-			control_time_error = "control time must only contain following values : bullet || blitz ||rapide"
-			error_list.append(control_time_error)
-
-		if len(tournement[5]) > 234:
-			description_error = "the description value must contain 234 characters."
-			error_list.append(description_error)
-
-		return self.check_errors(error_list)
-			
 
 	def check_form_add_player(self, player):
 		error_list = []
@@ -211,15 +163,15 @@ class Controller(View, Database):
 			instances = winner + zero + looser
 		return instances
 
-	def pairing_add_match(self, instances, first_round=True, round_list=None):
-		matchs = []
+	def pairing(self, instances, first_round=True, round_list=None):
+		pairing_list = []
 		if first_round == True:
 			nb_players = len(instances)
 			part_one = instances[:nb_players//2]
 			part_two = instances[nb_players//2:]
 			for player1, player2 in zip(part_one, part_two):
-				match_id = Database.add_match(self, player1, player2)
-				matchs.append(match_id)
+				pairing_list.append(player1, player2)
+			return pairing_list
 		else:
 			dict_1 = {}
 			dict_2 = {}
@@ -323,7 +275,7 @@ class Controller(View, Database):
 			if validator_points:
 				new_list_points = self.transform_matchs_scores_tuple(new_list_points)
 				update_matchs = Database.update_match_score(self, tournament_id, new_list_points)
-				if len(instance['rounds']) <= 7:
+				if len(instance['rounds']) < 7:
 					instances_order = self.round_classification(update_matchs, first_round=False)
 					list_match_id = self.pairing_add_match(instances_order, first_round=False, round_list=instance['rounds'])
 					list_match_instance = Database.select_from_match_table(self, get_instance=True, where_id=list_match_id)
@@ -413,6 +365,140 @@ class Controller(View, Database):
 					pass
 			else:
 				pass
+
+class Manager:
+
+	def check_form_add_tournament(self, tournement):
+		error_list = []
+		if len(tournement[0]) < 2 or len(tournement[0]) > 16:
+			name_error = "the name must contain between 2 to 16 characters."
+			error_list.append(name_error)
+		if len(tournement[1]) < 8 or len(tournement[1]) > 66:
+			place_error = "the place value must contain between 8 to 66 characters."
+			error_list.append(place_error)
+		if len(tournement[2]) != 10:
+			date_error = "the date format is incorrect."
+			error_list.append(date_error)
+		else:
+			try:
+				date = tournement[2].split("/")
+				for nb in date:
+					try:
+						int(nb)
+					except Exception as e:
+						date_error = "date must only contain integers"
+						error_list.append(date_error)
+			except Exception as e:
+				date_error = "the date format is incorrect."
+				error_list.append(date_error)
+
+		try:
+			int(tournement[3])
+		except Exception as e:
+			nb_of_turns = "nb of turns must only contain integers"
+			error_list.append(nb_of_turns)
+
+		if tournement[4].lower() != "bullet" and tournement[4].lower() != "blitz" and tournement[4].lower() != "rapide":
+			control_time_error = "control time must only contain following values : bullet || blitz ||rapide"
+			error_list.append(control_time_error)
+
+		if len(tournement[5]) > 234:
+			description_error = "the description value must contain 234 characters."
+			error_list.append(description_error)
+
+		if len(error_list) > 0:
+			return False, error_list
+		else:
+			return True, None
+
+	def parse_select_of_players(self, id_selected):
+		id_selected.replace(' ', '')
+		id_list = id_selected.split(",")
+		return id_list
+
+	def check_selection_of_players(self, id_list):
+		error_list = []
+		list_verified_id = []
+		if len(id_list) != 8:
+			nb_selected_error = "incorrect number of player id"
+			error_list.append(nb_selected_error)
+		else:
+			for player_id in id_list:
+				try:
+					int(player_id)
+					list_verified_id.append(player_id)
+				except Exception as e:
+					type_error = "player_id list must only contain integers."
+					error_list.append(type_error)
+		if len(error_list) > 0:
+			return False, error_list
+		else:
+			return True, None
+
+	def check_instances_players(self, id_list, instances):
+		error_list = []
+		for player_id, player_instance in zip(id_list, instances):
+			if player_instance == None:
+				player_error = "there is no player with the following id :{0}".format(player_id)
+				error_list.append(player_error)
+
+		if len(error_list) > 0:
+			return False, error_list
+		else:
+			return True, None
+
+	def round_classification(self, instances, first_round=True):
+		winner =[]
+		looser =[]
+		zero =[]
+		match_list = []
+
+		if first_round == True:
+			instances = sorted(instances, key=lambda k: k['ranking'])
+		else:
+			for match in instances:
+				player1, player2 = match['match']
+				if int(player1[1]) > int(player2[1]):
+					winner.append(player1[0])
+					looser.append(player2[0])
+				elif player1[1] == player2[1]:
+					zero.append(player1[0])
+					zero.append(player2[0])
+				else:
+					winner.append(player2[0])
+					looser.append(player1[0])
+			winner = sorted(winner, key=lambda k: k['ranking'])
+			looser = sorted(looser, key=lambda k: k['ranking'])
+			zero = sorted(zero, key=lambda k: k['ranking'])
+			instances = winner + zero + looser
+		return instances
+
+	def pairing(self, instances, first_round=True, round_list=None):
+		pairing_list = []
+		if first_round == True:
+			nb_players = len(instances)
+			part_one = instances[:nb_players//2]
+			part_two = instances[nb_players//2:]
+			for player1, player2 in zip(part_one, part_two):
+				pairing_list.append((player1, player2))
+			return pairing_list
+		else:
+			dict_1 = {}
+			dict_2 = {}
+			for player in instances:
+				p = {player['name']: player}
+				dict_1.update(p)
+				dict_2.update(p)
+
+			for i in range(4):
+				name1, name2 = self.check_pairings(dict_1, dict_2, round_list)
+				match_id = Database.add_match(self, dict_1[name1], dict_2[name2])
+				matchs.append(match_id)
+				del dict_1[name1]
+				del dict_1[name2]
+				del dict_2[name1]
+				del dict_2[name2]
+		return matchs
 
 if __name__ == '__main__':
 	controller = Controller()
