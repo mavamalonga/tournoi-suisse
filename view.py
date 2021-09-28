@@ -5,6 +5,7 @@ class View:
 		pass
 
 	def home_page(self):
+		print(end="\n")
 		page = "1"
 		print(f'{" "*60} HOME')
 		a = "1 : Add new tournament"
@@ -50,7 +51,7 @@ class View:
 		print(f'{" "*60} REPORTS')
 		a = "1 : List of all players"
 		b = "2 : List of all tournaments"
-		c = "b : Previous page"
+		c = "p : Previous page"
 		d = "e : Exit the application"
 		lines = [a, b, c, d]
 		for line in lines:
@@ -87,6 +88,12 @@ class View:
 		print(f"{' '*60} Id  Name    Date")
 		for tournament_id, tournament_instance in zip(ids, instances):
 			print(f"{' '*60} {tournament_id}   {tournament_instance['name']} {tournament_instance['date']}")
+		c = "p : Previous page"
+		d = "e : Exit the application"
+		print(end="\n")
+		lines = [c, d]
+		for line in lines:
+			print(f'{" "*60} {line}')
 
 	def tournament_menu(self, instance):
 		print(f"{' '*60} Tournament {instance['name']} \n")

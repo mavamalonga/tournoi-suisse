@@ -500,6 +500,55 @@ class Manager:
 				del dict_2[name2]
 		return matchs
 
+	def check_form_add_player(self, player):
+		error_list = []
+		if len(player[0]) < 2 or len(player[0]) > 16:
+			name_error = "the name must contain between 2 to 16 characters."
+			error_list.append(name_error)
+
+		if len(player[0]) < 2 or len(player[0]) > 16:
+			firstname_error = "the firstname must contain between 2 to 16 characters."
+			error_list.append(firstname_error)
+
+		if len(player[2]) != 10:
+			date_error = "the date of birth format is incorrect."
+			error_list.append(date_error)
+		else:
+			try:
+				date = player[2].split("/")
+				for nb in date:
+					try:
+						int(nb)
+					except Exception as e:
+						date_error = "birthday must only contain integers"
+						error_list.append(date_error)
+			except Exception as e:
+				date_error = "the date of birth format is incorrect."
+				error_list.append(date_error)		
+
+		if len(player[3]) != 1:
+			gender_error = "the gender field takes only one character."
+			error_list.append(gender_error)
+		else:
+			if player[3] != 'M' and player[3] != 'F':
+				gender_error = "the gender field only takes the value 'M' or 'F'."
+				error_list.append(gender_error)
+
+		try:
+			if int(player[4]) > 0: 
+				player[4] = int(player[4])
+			else:
+				error_ranking = "ranking this is a positive number"
+				error_list.append(error_ranking)
+		except Exception as e:
+			ranking_error = "ranking must only contain integers"
+			error_list.append(ranking_error)
+
+		if len(error_list) > 0:
+			return False, error_list
+		else:
+			return True, None
+
 if __name__ == '__main__':
 	controller = Controller()
 	controller.main()

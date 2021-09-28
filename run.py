@@ -5,6 +5,7 @@ urls = Urls()
 def main(urls):
 	page = urls.page_1()
 	while True:
+		print(end="\n")
 		request = input(f'{" "*45} Next page : ')
 		if request == "e":
 			exit()
@@ -17,10 +18,20 @@ def main(urls):
 			elif request == "3":
 				page = urls.page_13()
 			else:
-				pass
+				urls.page_404()
+		elif page == "13":
+			if request == "p":
+				page = urls.page_1()
+			elif request == "1":
+				page = urls.page_131()
+			elif request == "2":
+				page = urls.page_132()
+		elif page == "131":
+			pass
+
+
+
 		"""
-		elif page == "11":
-			validator = check_next_page(urls)
 		elif page == "12":
 			validator = check_next_page(urls)
 		elif page == "13":

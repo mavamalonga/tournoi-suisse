@@ -53,3 +53,35 @@ class Urls(View, Database, Manager):
 		else:
 			View.error(self, errors_1)
 		return page
+
+	def page_12(self):
+		add_again = "yes"
+		while add_again == "yes":
+			player = View.form_add_player(self)
+			validator, errors = Manager.check_form_add_player(self, player)
+			if validator:
+				Database.add_player(self, player[0], player[1], player[2], player[3], player[4])
+			else:
+				View.error(self, errors)
+			add_again = input(f'{" "*45}Add again ? yes/not : ')
+		View.home_page(self)
+
+	def page_13(self):
+		page = "13"
+		View.reports(self)
+		return page
+
+	def page_131(self):
+		page = "131"
+		players = Database.select_from_player_table(self, get_instance=True, order_by_name="name")
+		View.display_list_players(self,  players, page_1=True, order_by_name="name")
+		return page
+
+	def page_132(self):
+		page = "132"
+		ids, instances = Database.select_from_tournament_table(self, get_id=True, get_instance=True)
+		View.display_list_tournaments(self, ids, instances)
+		return page 
+
+	
+
