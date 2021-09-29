@@ -78,8 +78,10 @@ class View:
 		"""Footer"""
 		if order_by_name == "name":
 			print(f'{" "*60} r : Order by ranking')
+			print(f'{" "*60} p : Previous page')
 		else:
 			print(f'{" "*60} n : Order by name')
+			print(f'{" "*60} p : Previous page')
 		if page_1 == False:
 			print(f'{" "*60} m : Modify player"s ranking')
 
@@ -155,3 +157,7 @@ class View:
 		for error in error_list:
 			print(f'{" "*65}- {error}')
 		print(end='\n')
+
+	def notification(self, notif):
+		print(f'{" "*60} {notif}')
+		print(end="\n")

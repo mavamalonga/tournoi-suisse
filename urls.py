@@ -34,7 +34,7 @@ class Urls(View, Database, Manager):
 				validator_3, errors_3 = Manager.check_instances_players(self, selection_of_players, instances)
 				if validator_3:
 					instances = Manager.round_classification(self, instances, first_round=True)
-					pairing = Manager.pairing(self, instances, first_round=True, round_list=None)
+					pairing = Manager.pairing_first_round(self, instances)
 					matchs = []
 					for pair in pairing:
 						player1, player2 = pair
@@ -83,22 +83,109 @@ class Urls(View, Database, Manager):
 		View.display_list_players(self, players, page_1=True, order_by_name="ranking")
 		return page
 
-	def page_131_modify_player_ranking(self):
-		page = "131"
-		name, ranking = View.form_modify_ranking(self)
-		instances = Database.from_player_table_search_player(self, name)
-		validator, player_id, errors = Manager.check_modify_ranking(instances, name, ranking)
-		if validator:
-			Database.from_player_table_update_ranking(self, ranking, [int(player_id)])
-		else:
-			View.error(self, errors)
-		return page
-
 	def page_132(self):
 		page = "132"
 		ids, instances = Database.select_from_tournament_table(self, get_id=True, get_instance=True)
 		View.display_list_tournaments(self, ids, instances)
 		return page 
+
+	def page_132t(self, tournament_id):
+		page = "132t"
+		validator, errors = Manager.check_select_tournament(self, tournament_id)
+		if validator:
+			tournament_instance = Database.select_from_tournament_table(self, 
+				get_instance=True, where_id=tournament_id)
+			View.tournament_menu(self, tournament_instance)
+			return page, tournament_id, tournament_instance
+		else:
+			page = "132"
+			View.error(self, errors)
+			return page, None, None
+
+	def page_132t1_name(self, tournament_instance):
+		page = "132t1"
+		players = Database.select_from_player_table(self, get_instance=True, where_id=tournament_instance['players'], 
+			order_by_name="name")
+		View.display_list_players(self, players, page_1=False, order_by_name="name")
+		return page
+
+	def page_132t1_ranking(self, tournament_instance):
+		page = "132t1"
+		players = Database.select_from_player_table(self, get_instance=True, 
+			where_id=tournament_instance['players'], order_by_name="ranking")
+		View.display_list_players(self, players, page_1=False, order_by_name="ranking")
+		return page
+
+	def page_132t1_modify_ranking(self):
+		page = "132t1"
+		name, ranking = View.form_modify_ranking(self)
+		instances = Database.from_player_table_search_player(self, name)
+		validator, player_id, errors = Manager.check_modify_ranking(self, instances, name, ranking)
+		if validator:
+			Database.from_player_table_update_ranking(self, ranking, [int(player_id)])
+			View.notification(self, "change success !!")
+		else:
+			View.error(self, errors)
+		return page
+
+	def page_132t2(self, tournament_instance):
+		page = "132t2"
+		View.display_rounds(self, tournament_instance['rounds'])
+		return page
+
+	def page_132t2r(self, tournament_id, tournament_instance):
+		page = "132t2"
+		"""Update round score"""
+		pts_list = View.display_form_results(self, tournament_instance['rounds'])
+		validator_1, new_pts_list, errors_1 = Manager.convert_points(self, pts_list)
+		if validator_1:
+			validator_2, errors_2 = Manager.check_points_values(self, new_pts_list)
+			if validator_2:
+				new_pts_list = Manager.transform_matchs_scores_tuple(self, new_pts_list)
+				update_matchs = Database.update_match_score(self, tournament_id, new_pts_list)
+				""" create new rounds"""
+				if len(tournament_instance['rounds']) < 7:
+					instances_order = Manager.round_classification(self, update_matchs, first_round=False)
+					""" create pairing and add new match"""
+					matchs = []
+					dict_1 = {}
+					dict_2 = {}
+					for player in instances_order:
+						p = {player['name']: player}
+						dict_1.update(p)
+						dict_2.update(p)
+					for i in range(4):
+						name1, name2 = Manager.check_pairings(self, dict_1, dict_2, tournament_instance['rounds'])
+						match_id = Database.add_match(self, dict_1[name1], dict_2[name2])
+						matchs.append(match_id)
+						del dict_1[name1]
+						del dict_1[name2]
+						del dict_2[name1]
+						del dict_2[name2]
+					match_instances = Database.select_from_match_table(self, get_instance=True, where_id=matchs)
+					round_id = Database.add_round(self, match_instances)
+					round_instances = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
+					Database.update_tournament_round(self, tournament_id, round_instances[0])
+					View.notification(self, "change success !!")
+					return page
+				else:
+					"""the tournament has reached its maximum number of matches"""
+					pass 
+			else:
+				View.error(self, errors_2)
+				return page
+		else:
+			View.error(self, errors_1)
+			return  page
+
+
+
+
+	def page_132t3(self, tournament_instance):
+		page = "132t3"
+		View.display_matchs(self, tournament_instance['rounds'])
+		return page 
+
 
 
 

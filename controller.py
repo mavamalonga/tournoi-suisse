@@ -473,32 +473,14 @@ class Manager:
 			instances = winner + zero + looser
 		return instances
 
-	def pairing(self, instances, first_round=True, round_list=None):
+	def pairing_first_round(self, instances):
 		pairing_list = []
-		if first_round == True:
-			nb_players = len(instances)
-			part_one = instances[:nb_players//2]
-			part_two = instances[nb_players//2:]
-			for player1, player2 in zip(part_one, part_two):
-				pairing_list.append((player1, player2))
-			return pairing_list
-		else:
-			dict_1 = {}
-			dict_2 = {}
-			for player in instances:
-				p = {player['name']: player}
-				dict_1.update(p)
-				dict_2.update(p)
-
-			for i in range(4):
-				name1, name2 = self.check_pairings(dict_1, dict_2, round_list)
-				match_id = Database.add_match(self, dict_1[name1], dict_2[name2])
-				matchs.append(match_id)
-				del dict_1[name1]
-				del dict_1[name2]
-				del dict_2[name1]
-				del dict_2[name2]
-		return matchs
+		nb_players = len(instances)
+		part_one = instances[:nb_players//2]
+		part_two = instances[nb_players//2:]
+		for player1, player2 in zip(part_one, part_two):
+			pairing_list.append((player1, player2))
+		return pairing_list
 
 	def check_form_add_player(self, player):
 		error_list = []
@@ -569,6 +551,122 @@ class Manager:
 			return False, None, error_list
 		else:
 			return True, player_id, None
+
+	def check_select_tournament(self, tournament_id):
+		error_list = []
+		try:
+			int(tournament_id)
+		except Exception as e:
+			id_error = "tournament_id must only contain integers. :{0}".format(tournament_id)
+			error_list.append(id_error)
+		if len(error_list) > 0:
+			return False, error_list
+		else:
+			return True, None
+
+	def convert_points(self, list_points):
+		new_list_points = []
+		error_list = []
+		for pts in list_points:
+			try:
+				value = int(pts)
+				int_validator = "True"
+			except Exception as e:
+				int_validator = "False"
+				try:
+					value = float(pts)
+					float_validator = "True"
+				except Exception as e:
+					float_validator = "False"
+
+			if int_validator == "True" or float_validator == "True":
+				new_list_points.append(value)
+			else:
+				error_type = "'{0}' value is incorrect, points only accept values of type int and float".format(pts)
+				error_list.append(error_type)
+		
+		if len(error_list) > 0:
+			return False, None, error_list
+		else:
+			return True, new_list_points, None
+
+
+	def check_points_values(self, pts_list):
+		error_list = []
+		for value in pts_list:
+			if value == 0 or value == 0.5 or value == 1:
+				pass
+			else:
+				error = f"{value}' value is incorrect, points only accept the following values : 0, 0.5, 1"
+				error_list.append(error)
+
+		if len(error_list) > 0:
+			return False, error_list
+		else:
+			return True, None
+
+	def transform_matchs_scores_tuple(self, list_points):
+		size_list = len(list_points)
+		index1, index2, match = (0, 1, 0)
+		new_list = []
+		while match < size_list/2:
+			score1 = list_points[index1]
+			score2 = list_points[index2]
+			new_list.append((score1, score2))
+			index1 += 2
+			index2 += 2
+			match += 1
+		return new_list
+
+	def round_classification(self, instances, first_round=True):
+		winner =[]
+		looser =[]
+		zero =[]
+		match_list = []
+
+		if first_round == True:
+			instances = sorted(instances, key=lambda k: k['ranking'])
+		else:
+			for match in instances:
+				player1, player2 = match['match']
+				if int(player1[1]) > int(player2[1]):
+					winner.append(player1[0])
+					looser.append(player2[0])
+				elif player1[1] == player2[1]:
+					zero.append(player1[0])
+					zero.append(player2[0])
+				else:
+					winner.append(player2[0])
+					looser.append(player1[0])
+			winner = sorted(winner, key=lambda k: k['ranking'])
+			looser = sorted(looser, key=lambda k: k['ranking'])
+			zero = sorted(zero, key=lambda k: k['ranking'])
+			instances = winner + zero + looser
+		return instances
+
+	def check_pairings(self, dict_1, dict_2, round_list):
+		for key1_name in dict_1:
+			player1 = dict_1[key1_name]
+			for key2_name in dict_2:
+				player2 = dict_2[key2_name]
+				if self.check_match_exits(player1['name'], player2['name'], round_list):
+					continue
+				else:
+					return player1['name'], player2['name']
+
+	"""check if the match already exists"""
+	def check_match_exits(self, player1_name, player2_name, round_list):
+		for round_instance in round_list:
+			for match in round_instance['matchs']:
+				player1, player2 = match['match']
+				if player1_name == player1[0]['name'] or player2[0]['name'] == player1_name:
+					if player2_name == player1[0]['name'] or player2[0]['name'] == player2_name:
+						return True
+					else:
+						pass
+				else:
+					pass
+		return False
 
 if __name__ == '__main__':
 	controller = Controller()
