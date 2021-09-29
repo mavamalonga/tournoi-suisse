@@ -71,10 +71,27 @@ class Urls(View, Database, Manager):
 		View.reports(self)
 		return page
 
-	def page_131(self):
+	def page_131_name(self):
 		page = "131"
 		players = Database.select_from_player_table(self, get_instance=True, order_by_name="name")
 		View.display_list_players(self,  players, page_1=True, order_by_name="name")
+		return page
+
+	def page_131_ranking(self):
+		page = "131"
+		players = Database.select_from_player_table(self, get_instance=True, order_by_name="ranking")
+		View.display_list_players(self, players, page_1=True, order_by_name="ranking")
+		return page
+
+	def page_131_modify_player_ranking(self):
+		page = "131"
+		name, ranking = View.form_modify_ranking(self)
+		instances = Database.from_player_table_search_player(self, name)
+		validator, player_id, errors = Manager.check_modify_ranking(instances, name, ranking)
+		if validator:
+			Database.from_player_table_update_ranking(self, ranking, [int(player_id)])
+		else:
+			View.error(self, errors)
 		return page
 
 	def page_132(self):
@@ -83,5 +100,5 @@ class Urls(View, Database, Manager):
 		View.display_list_tournaments(self, ids, instances)
 		return page 
 
-	
+
 

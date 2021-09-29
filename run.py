@@ -23,11 +23,25 @@ def main(urls):
 			if request == "p":
 				page = urls.page_1()
 			elif request == "1":
-				page = urls.page_131()
+				page = urls.page_131_name()
 			elif request == "2":
 				page = urls.page_132()
 		elif page == "131":
-			pass
+			if request == "p":
+				page = urls.page_13()
+			elif request == "n":
+				page = urls.page_131_name()
+			elif request == "r":
+				page = urls.page_131_ranking()
+			elif request == "m":
+				page = urls.page_131_modify_player_ranking()
+		elif page == "132":
+			if request == "p":
+				page = urls.page_13()
+			elif request == "1":
+				## select tournamenet
+				pass
+
 
 
 

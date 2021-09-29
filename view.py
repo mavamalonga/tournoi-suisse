@@ -77,11 +77,11 @@ class View:
 			print(f'{" "*62} {player["ranking"]}{" "*6}{player["name"]} {player["firstname"]}')
 		"""Footer"""
 		if order_by_name == "name":
-			print(f'{" "*60} 2 : order by ranking')
+			print(f'{" "*60} r : Order by ranking')
 		else:
-			print(f'{" "*60} 1 : order by name')
+			print(f'{" "*60} n : Order by name')
 		if page_1 == False:
-			print(f'{" "*60} 3 : Modify player"s ranking')
+			print(f'{" "*60} m : Modify player"s ranking')
 
 	def display_list_tournaments(self, ids, instances):
 		print(" "*60 + " LIST OF ALL TOURNAMENT")

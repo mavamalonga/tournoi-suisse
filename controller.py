@@ -549,6 +549,27 @@ class Manager:
 		else:
 			return True, None
 
+	def check_modify_ranking(self, instances, name, ranking):
+		error_list = []
+		try:
+			ranking = int(ranking)
+			ranking_int = True
+		except Exception as e:
+			ranking_int = False
+			ranking_error = "ranking must only contain integers"
+			error_list.append(ranking_error)
+
+		if len(instances) != 0 and ranking_int:
+			player_id = instances[0].doc_id
+		else:
+			name_error = f'there is no user with the name {name}'
+			error_list.append(name_error)
+
+		if len(error_list) > 0:
+			return False, None, error_list
+		else:
+			return True, player_id, None
+
 if __name__ == '__main__':
 	controller = Controller()
 	controller.main()
