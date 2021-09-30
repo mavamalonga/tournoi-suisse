@@ -64,7 +64,6 @@ class Urls(View, Database, Manager):
 			else:
 				View.error(self, errors)
 			add_again = input(f'{" "*45}Add again ? yes/not : ')
-		View.home_page(self)
 
 	def page_13(self):
 		page = "13"
@@ -95,8 +94,13 @@ class Urls(View, Database, Manager):
 		if validator:
 			tournament_instance = Database.select_from_tournament_table(self, 
 				get_instance=True, where_id=tournament_id)
-			View.tournament_menu(self, tournament_instance)
-			return page, tournament_id, tournament_instance
+			if tournament_instance != None:
+				View.tournament_menu(self, tournament_instance)
+				return page, tournament_id, tournament_instance
+			else:
+				page = "132"
+				View.error(self, [f'there is no tournament with the following id {tournament_id}'])
+				return page, None, None
 		else:
 			page = "132"
 			View.error(self, errors)
@@ -134,7 +138,6 @@ class Urls(View, Database, Manager):
 		return page
 
 	def page_132t2r(self, tournament_id, tournament_instance):
-		page = "132t2"
 		"""Update round score"""
 		pts_list = View.display_form_results(self, tournament_instance['rounds'])
 		validator_1, new_pts_list, errors_1 = Manager.convert_points(self, pts_list)
@@ -167,25 +170,45 @@ class Urls(View, Database, Manager):
 					round_instances = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
 					Database.update_tournament_round(self, tournament_id, round_instances[0])
 					View.notification(self, "change success !!")
-					return page
 				else:
 					"""the tournament has reached its maximum number of matches"""
-					pass 
+					pass
 			else:
 				View.error(self, errors_2)
-				return page
 		else:
 			View.error(self, errors_1)
-			return  page
-
-
-
 
 	def page_132t3(self, tournament_instance):
 		page = "132t3"
 		View.display_matchs(self, tournament_instance['rounds'])
 		return page 
 
+	def page_14(self):
+		page = "14"
+		View.settings(self)
+		return page
 
+	def page_drop_database(self):
+		to_confirm = View.confirm(self)
+		if to_confirm:
+			Database.drop_database(self)
+			View.notification(self, "drop database successful !")
+			page = self.page_14()
+		else:
+			View.notification(self, "drop database canceled.")
+			page = self.page_14()
 
+	def page_drop_table(self):
+		page = View.drop_table(self)
+		return page
 
+	def page_drop_table_1(self, table):
+		Database.drop_table(self, table)
+		print_table = f'drop table {table} successful !'
+		View.notification(self, print_table)
+		page = self.page_14()
+		return page 
+
+	def page_404(self):
+		View.page_404(self)
+		return None

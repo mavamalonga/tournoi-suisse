@@ -6,16 +6,16 @@ class View:
 
 	def home_page(self):
 		print(end="\n")
-		page = "1"
 		print(f'{" "*60} HOME')
-		a = "1 : Add new tournament"
-		b = "2 : Add new player"
-		c = "3 : Read reports"
-		d = "e : Exit the application"
+		a = "1 : Add tournament"
+		b = "2 : Add player"
+		c = "3 : Reports"
+		d = "4 : Settings"
 		lines = [a, b, c, d]
 		for line in lines:
 			print(f'{" "*60} {line}')
-		return page, None
+		print(end="\n")
+		print(f'{" "*60} e : Exit')
 		
 	def form_add_tournament(self):
 		print(f'{" "*60} ADD TOURNAMENT')
@@ -52,10 +52,14 @@ class View:
 		a = "1 : List of all players"
 		b = "2 : List of all tournaments"
 		c = "p : Previous page"
-		d = "e : Exit the application"
-		lines = [a, b, c, d]
+		d = "e : Exit"
+		lines = [a, b]
 		for line in lines:
 			print(f'{" "*60} {line}')
+		print(end="\n")
+		print(f'{" "*60} {c}')
+		print(f'{" "*60} {d}')
+
 
 	def tournament_add_players(self, id_list, instances):
 		print(f'{" "*60} Add players : enter the id of 8 players separated by commas')
@@ -76,6 +80,7 @@ class View:
 		for player in players:
 			print(f'{" "*62} {player["ranking"]}{" "*6}{player["name"]} {player["firstname"]}')
 		"""Footer"""
+		print(end="\n")
 		if order_by_name == "name":
 			print(f'{" "*60} r : Order by ranking')
 			print(f'{" "*60} p : Previous page')
@@ -91,28 +96,34 @@ class View:
 		for tournament_id, tournament_instance in zip(ids, instances):
 			print(f"{' '*60} {tournament_id}   {tournament_instance['name']} {tournament_instance['date']}")
 		c = "p : Previous page"
-		d = "e : Exit the application"
+		d = "e : Exit"
 		print(end="\n")
 		lines = [c, d]
 		for line in lines:
 			print(f'{" "*60} {line}')
 
 	def tournament_menu(self, instance):
-		print(f"{' '*60} Tournament {instance['name']} \n")
+		print(f"{' '*60} TOURNAMENT {instance['name'].upper()}")
+		print(f"{' '*60} {'Details'}")
 		for attr in instance:
 			if attr != "name" and attr != "rounds" and attr != "players":
-				print(f"{' '*60} {attr} : {instance[str(attr)]}")
+				print(f"{' '*62} {attr} : {instance[str(attr)]}")
 		print(end="\n")
 		a = "1 : List of all players in a tournament"
 		b = "2 : List of all rounds in a tournament"
 		c = "3 : List of all matchs in tournament"
-		d = "b : Previous page"
-		e = "e : Exit the application"
-		lines = [a, b, c, d, e]
+		d = "p : Previous page"
+		e = "e : Exit"
+		lines = [a, b, c]
 		for line in lines:
 			print(f'{" "*60} {line}')
+		print(end="\n")
+		print(f'{" "*60} {d}')
+		print(f'{" "*60} {e}')
 
 	def display_rounds(self, round_list):
+		d = "p : Previous page"
+		e = "e : Exit"
 		print(f"{' '*60} LIST OF ALL ROUNDS IN A TOURNAMENT")
 		for round_instance in round_list:
 			print(f"{' '*60} {round_instance['name']}")
@@ -126,13 +137,22 @@ class View:
 			print(f"{' '*65}Tournament ended on {round_list[-1]['end_date']}")
 		else:
 			print(f"{' '*65} To enter the results press the key 'r'")
+		print(end="\n")
+		print(f"{' '*65} {d}")
+		print(f"{' '*65} {e}")
+
 
 	def display_matchs(self, round_list):
+		d = "p : Previous page"
+		e = "e : Exit"
 		print(f"{' '*60} LIST OF ALL MATCHS IN TOURNAMENT")
 		for round_instance in round_list:
 			for match in round_instance['matchs']:
 				player1, player2 = match['match']
 				print(f"{' '*65} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
+		print(end="\n")
+		print(f"{' '*65} {d}")
+		print(f"{' '*65} {e}")
 
 	def display_form_results(self, round_list):
 		latest_round = round_list[-1]
@@ -161,3 +181,52 @@ class View:
 	def notification(self, notif):
 		print(f'{" "*60} {notif}')
 		print(end="\n")
+
+
+	def settings(self):
+		print(end="\n")
+		print(f'{" "*60} SETTINGS')
+		a = "1 : Remove database"
+		b = "2 : Remove table"
+		d = "p : Previous page"
+		e = "e : Exit"
+		lines = [a, b]
+		for line in lines:
+			print(f'{" "*60} {line}')
+		print(end="\n")
+		for line in [d, e]:
+			print(f'{" "*60} {line}')
+
+	def confirm(self):
+		confirm = input(f'{" "*45} confirm the drop database ? yes/not : ')
+		if confirm == "yes" or confirm == "not":
+			if confirm == "yes":
+				return True
+			else:
+				return False
+		else:
+			self.notification("I did not understand the answer.")
+			return False
+
+	def drop_table(self):
+		page = "142"
+		print(end="\n")
+		print(f'{" "*60} REMOVE TABLE')
+		a = "1 : Remove Tournament table "
+		b = "2 : Remove Player table"
+		d = "3 : Remove Match table"
+		e = "4 : Remove Round table"
+		f = "p : Previous page"
+		g = "e : Exit"
+		lines = [a, b, d, e]
+		for line in lines:
+			print(f'{" "*60} {line}')
+		print(end="\n")
+		for line in [f, g]:
+			print(f'{" "*60} {line}')
+		return page
+
+	def page_404(self):
+		line = "Please enter a valid value"
+		print(f'{" "*60} {line}')
+

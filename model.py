@@ -156,6 +156,8 @@ class Database:
 		round_list.append(round_instance)
 		self.tournament_table.update({'rounds': round_list }, doc_ids=[int(tournament_id)])
 
+	def drop_database(self):
+		self.db.truncate()
 
 	def drop_table(self, table):
 		self.db.drop_table(table)
