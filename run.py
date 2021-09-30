@@ -56,6 +56,9 @@ def main(urls):
 				page = urls.page_132t2(tournament_instance)
 			elif request == "3":
 				page = urls.page_132t3(tournament_instance)
+			elif request == "4":
+				urls.page_132t4(tournament_id)
+				page, tournament_id, tournament_instance = urls.page_132t(tournament_id)
 			else:
 				urls.page_404()
 		elif page == "132t1":
@@ -96,13 +99,17 @@ def main(urls):
 			if request == "p":
 				page = urls.page_14()
 			elif request == "1":
-				page = urls.page_drop_table_1(request)
+				table = "Tournament"
+				page = urls.page_drop_table_1(table)
 			elif request == "2":
-				page = urls.page_drop_table_1(request)
+				table = "Player"
+				page = urls.page_drop_table_1(table)
 			elif request == "3":
-				page = urls.page_drop_table_1(request)
+				table = "Match"
+				page = urls.page_drop_table_1(table)
 			elif request == "4":
-				page = urls.page_drop_table_1(request)
+				table = "Rounds"
+				page = urls.page_drop_table_1(table)
 			else:
 				urls.page_404()
 

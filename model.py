@@ -15,7 +15,7 @@ class Database:
 		tournament = {
 			"name": name,
 			"place": place,
-			"date": date,
+			"date": [date],
 			"number_of_turns": number_of_turns,
 			"rounds": [rounds],
 			"players": players,
@@ -156,12 +156,19 @@ class Database:
 		round_list.append(round_instance)
 		self.tournament_table.update({'rounds': round_list }, doc_ids=[int(tournament_id)])
 
+	def update_date_tournament(self, tournament_id, date):
+		instance = self.select_from_tournament_table(get_instance=True, where_id=int(tournament_id))
+		new_dates = instance['date']
+		new_dates.append(date)
+		self.tournament_table.update({'date': new_dates}, doc_ids=[int(tournament_id)])
+
 	def drop_database(self):
 		self.db.truncate()
 
 	def drop_table(self, table):
 		self.db.drop_table(table)
 
+	"""
 	def remove_match(self, match_id):
 		print(self.match_table.all())
 		self.match_table.remove(doc_ids=match_id)
@@ -179,3 +186,4 @@ class Database:
 
 	def update_player(self):
 		self.player_table.update({"ranking": 9}, doc_ids=[11])
+	"""

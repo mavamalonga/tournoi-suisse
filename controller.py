@@ -67,6 +67,7 @@ class Manager:
 				except Exception as e:
 					type_error = "player_id list must only contain integers."
 					error_list.append(type_error)
+
 		if len(error_list) > 0:
 			return False, error_list
 		else:
@@ -304,3 +305,30 @@ class Manager:
 				else:
 					pass
 		return False
+
+	def check_date_tournament(self, new_date):
+		error_list = []
+		if len(new_date) != 10:
+			date_error = "the date format is incorrect."
+			error_list.append(date_error)
+		else:
+			try:
+				date = new_date.split("/")
+				for nb in date:
+					try:
+						int(nb)
+					except Exception as e:
+						date_error = "date must only contain integers"
+						error_list.append(date_error)
+			except Exception as e:
+				date_error = "the date format is incorrect."
+				error_list.append(date_error)
+
+		if len(error_list) > 0:
+			return False, error_list
+		else:
+			return True, None
+
+
+
+

@@ -47,9 +47,9 @@ class Urls(View, Database, Manager):
 						tournament_values[3], round_instance[0], selection_of_players, tournament_values[4], 
 							tournament_values[5])
 				else:
-					View.errors(self, errors_3)
+					View.error(self, errors_3)
 			else:
-				View.errors(self, errors_2)
+				View.error(self, errors_2)
 		else:
 			View.error(self, errors_1)
 		return page
@@ -182,6 +182,15 @@ class Urls(View, Database, Manager):
 		page = "132t3"
 		View.display_matchs(self, tournament_instance['rounds'])
 		return page 
+
+	def page_132t4(self, tournament_id):
+		new_date = View.add_new_date_tournament(self)
+		validator, errors = Manager.check_date_tournament(self, new_date)
+		if validator:
+			Database.update_date_tournament(self, tournament_id, new_date)
+			View.notification(self, "Add new date success !")
+		else:
+			View.error(self, errors)
 
 	def page_14(self):
 		page = "14"

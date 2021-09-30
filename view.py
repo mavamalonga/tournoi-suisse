@@ -92,9 +92,9 @@ class View:
 
 	def display_list_tournaments(self, ids, instances):
 		print(" "*60 + " LIST OF ALL TOURNAMENT")
-		print(f"{' '*60} Id  Name    Date")
+		print(f"{' '*60} Id  Name    Start date")
 		for tournament_id, tournament_instance in zip(ids, instances):
-			print(f"{' '*60} {tournament_id}   {tournament_instance['name']} {tournament_instance['date']}")
+			print(f"{' '*60} {tournament_id}   {tournament_instance['name']} {tournament_instance['date'][0]}")
 		c = "p : Previous page"
 		d = "e : Exit"
 		print(end="\n")
@@ -107,19 +107,25 @@ class View:
 		print(f"{' '*60} {'Details'}")
 		for attr in instance:
 			if attr != "name" and attr != "rounds" and attr != "players":
-				print(f"{' '*62} {attr} : {instance[str(attr)]}")
+				if attr == "date":
+					print(f"{' '*62} {'date(s)'} : ")
+					for date in  instance[str(attr)]:
+						print(f"{' '*71}{date}")
+				else:
+					print(f"{' '*62} {attr} : {instance[str(attr)]}")
 		print(end="\n")
 		a = "1 : List of all players in a tournament"
 		b = "2 : List of all rounds in a tournament"
 		c = "3 : List of all matchs in tournament"
-		d = "p : Previous page"
-		e = "e : Exit"
-		lines = [a, b, c]
+		d = "4 : Change the date of the tournament"
+		e = "p : Previous page"
+		f = "e : Exit"
+		lines = [a, b, c, d]
 		for line in lines:
 			print(f'{" "*60} {line}')
 		print(end="\n")
-		print(f'{" "*60} {d}')
 		print(f'{" "*60} {e}')
+		print(f'{" "*60} {f}')
 
 	def display_rounds(self, round_list):
 		d = "p : Previous page"
@@ -229,4 +235,8 @@ class View:
 	def page_404(self):
 		line = "Please enter a valid value"
 		print(f'{" "*60} {line}')
+
+	def add_new_date_tournament(self):
+		date = input(f'{" "*60} New date : ')
+		return date
 
