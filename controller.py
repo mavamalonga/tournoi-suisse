@@ -331,6 +331,29 @@ class Manager:
 		else:
 			return True, None
 
+	def new_round_pairing_algo(self, instances_order, tournament_instance):
+		matchs = []
+		dict_1 = {}
+		dict_2 = {}
+		pairing_list = []
+		for player in instances_order:
+			p = {player['name']: player}
+			dict_1.update(p)
+			dict_2.update(p)
+		for i in range(4):
+			try:
+				name1, name2 = self.check_pairings(self, dict_1, dict_2, tournament_instance['rounds'])
+			except Exception as e:
+				name1, name2 = list(dict_1)[-1], list(dict_1)[-2]
+			pairing_list.append((dict_1[name1], dict_2[name2]))
+			del dict_1[name1]
+			del dict_1[name2]
+			del dict_2[name1]
+			del dict_2[name2]
+		return pairing_list
+
+
+
 
 
 

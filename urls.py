@@ -146,29 +146,14 @@ class Urls(View, Database, Manager):
 			if validator_2:
 				new_pts_list = Manager.transform_matchs_scores_tuple(self, new_pts_list)
 				update_matchs = Database.update_match_score(self, tournament_id, new_pts_list)
-				""" create new rounds"""
 				if len(tournament_instance['rounds']) < 7:
 					instances_order = Manager.round_classification(self, update_matchs, first_round=False)
-					""" create pairing and add new match"""
+					pairing_list = Manager.new_round_pairing_algo(self, instances_order, tournament_instance)
 					matchs = []
-					dict_1 = {}
-					dict_2 = {}
-					for player in instances_order:
-						p = {player['name']: player}
-						dict_1.update(p)
-						dict_2.update(p)
-
-					for i in range(4):
-						try:
-							name1, name2 = Manager.check_pairings(self, dict_1, dict_2, tournament_instance['rounds'])
-						except Exception as e:
-							name1, name2 = list(dict_1)[-1], list(dict_1)[-2]
-						match_id = Database.add_match(self, dict_1[name1], dict_2[name2])
+					for pair in pairing_list:
+						p1, p2 = pair
+						match_id = Database.add_match(self, p1, p2)
 						matchs.append(match_id)
-						del dict_1[name1]
-						del dict_1[name2]
-						del dict_2[name1]
-						del dict_2[name2]
 					match_instances = Database.select_from_match_table(self, get_instance=True, where_id=matchs)
 					round_id = Database.add_round(self, match_instances)
 					round_instances = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
