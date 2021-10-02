@@ -282,6 +282,8 @@ class Manager:
 			instances = winner + zero + looser
 		return instances
 
+
+
 	def check_pairings(self, dict_1, dict_2, round_list):
 		for key1_name in dict_1:
 			player1 = dict_1[key1_name]

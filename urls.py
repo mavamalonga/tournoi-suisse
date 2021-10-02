@@ -157,8 +157,12 @@ class Urls(View, Database, Manager):
 						p = {player['name']: player}
 						dict_1.update(p)
 						dict_2.update(p)
+
 					for i in range(4):
-						name1, name2 = Manager.check_pairings(self, dict_1, dict_2, tournament_instance['rounds'])
+						try:
+							name1, name2 = Manager.check_pairings(self, dict_1, dict_2, tournament_instance['rounds'])
+						except Exception as e:
+							name1, name2 = list(dict_1)[-1], list(dict_1)[-2]
 						match_id = Database.add_match(self, dict_1[name1], dict_2[name2])
 						matchs.append(match_id)
 						del dict_1[name1]
