@@ -1,9 +1,4 @@
-from model import Database
-
 class View:
-	def __init__(self):
-		pass
-
 	def home_page(self):
 		print(end="\n")
 		print(f'{" "*60} HOME')
@@ -16,7 +11,7 @@ class View:
 			print(f'{" "*60} {line}')
 		print(end="\n")
 		print(f'{" "*60} e : Exit')
-		
+
 	def form_add_tournament(self):
 		print(f'{" "*60} ADD TOURNAMENT')
 		form_values = []
@@ -26,8 +21,7 @@ class View:
 		nb_of_turns = "nb of turns : "
 		controller_time = "controller time : "
 		description = "description : "
-		lines = [name, place, date, nb_of_turns, controller_time, 
-			description]
+		lines = [name, place, date, nb_of_turns, controller_time, description]
 		for line in lines:
 			value = input(f'{" "*60} {line}')
 			form_values.append(value)
@@ -60,7 +54,6 @@ class View:
 		print(f'{" "*60} {c}')
 		print(f'{" "*60} {d}')
 
-
 	def tournament_add_players(self, id_list, instances):
 		print(f'{" "*60} Add players : enter the id of 8 players separated by commas')
 		print(f'{" "*60} Id  Firstname  Name  Gender  Birthday')
@@ -87,11 +80,11 @@ class View:
 		else:
 			print(f'{" "*60} n : Order by name')
 			print(f'{" "*60} p : Previous page')
-		if page_1 == False:
+		if page_1 is False:
 			print(f'{" "*60} m : Modify player"s ranking')
 
 	def display_list_tournaments(self, ids, instances):
-		print(" "*60 + " LIST OF ALL TOURNAMENT")
+		print(" " * 60 + " LIST OF ALL TOURNAMENT")
 		print(f"{' '*60} Id  Name    Start date")
 		for tournament_id, tournament_instance in zip(ids, instances):
 			print(f"{' '*60} {tournament_id}   {tournament_instance['name']} {tournament_instance['date'][0]}")
@@ -109,7 +102,7 @@ class View:
 			if attr != "name" and attr != "rounds" and attr != "players":
 				if attr == "date":
 					print(f"{' '*62} {'date(s)'} : ")
-					for date in  instance[str(attr)]:
+					for date in instance[str(attr)]:
 						print(f"{' '*71}{date}")
 				else:
 					print(f"{' '*62} {attr} : {instance[str(attr)]}")
@@ -139,14 +132,13 @@ class View:
 				player1, player2 = match['match']
 				print(f"{' '*65} {player1[0]['name']} {player1[1]} vs {player2[1]} {player2[0]['name']}")
 			print(f'{" "} \n')
-		if len(round_list) == 7 and round_list[-1]['end_date'] != None:
+		if len(round_list) == 7 and round_list[-1]['end_date'] is not None:
 			print(f"{' '*65}Tournament ended on {round_list[-1]['end_date']}")
 		else:
 			print(f"{' '*65} To enter the results press the key 'r'")
 		print(end="\n")
 		print(f"{' '*65} {d}")
 		print(f"{' '*65} {e}")
-
 
 	def display_matchs(self, round_list):
 		d = "p : Previous page"
@@ -187,7 +179,6 @@ class View:
 	def notification(self, notif):
 		print(f'{" "*60} {notif}')
 		print(end="\n")
-
 
 	def settings(self):
 		print(end="\n")
@@ -239,4 +230,3 @@ class View:
 	def add_new_date_tournament(self):
 		date = input(f'{" "*60} New date : ')
 		return date
-
