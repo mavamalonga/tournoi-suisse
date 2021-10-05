@@ -1,45 +1,40 @@
-from tinydb import TinyDB, Query
-from model import Database
-from view import View
-import os
-
 class Manager:
 
-	def check_form_add_tournament(self, tournement):
+	def check_form_add_tournament(self, values):
 		error_list = []
-		if len(tournement[0]) < 2 or len(tournement[0]) > 16:
+		if len(values[0]) < 2 or len(values[0]) > 16:
 			name_error = "the name must contain between 2 to 16 characters."
 			error_list.append(name_error)
-		if len(tournement[1]) < 8 or len(tournement[1]) > 66:
+		if len(values[1]) < 8 or len(values[1]) > 66:
 			place_error = "the place value must contain between 8 to 66 characters."
 			error_list.append(place_error)
-		if len(tournement[2]) != 10:
+		if len(values[2]) != 10:
 			date_error = "the date format is incorrect."
 			error_list.append(date_error)
 		else:
 			try:
-				date = tournement[2].split("/")
+				date = values[2].split("/")
 				for nb in date:
 					try:
 						int(nb)
-					except Exception as e:
+					except Exception:
 						date_error = "date must only contain integers"
 						error_list.append(date_error)
-			except Exception as e:
+			except Exception:
 				date_error = "the date format is incorrect."
 				error_list.append(date_error)
 
 		try:
-			int(tournement[3])
-		except Exception as e:
+			int(values[3])
+		except Exception:
 			nb_of_turns = "nb of turns must only contain integers"
 			error_list.append(nb_of_turns)
 
-		if tournement[4].lower() != "bullet" and tournement[4].lower() != "blitz" and tournement[4].lower() != "rapide":
-			control_time_error = "control time must only contain following values : bullet || blitz ||rapide"
-			error_list.append(control_time_error)
+		if values[4] != "bullet" and values[4] != "blitz" and values[4] != "rapide":
+			time_error = "control time must only contain following values : bullet || blitz ||rapide"
+			error_list.append(time_error)
 
-		if len(tournement[5]) > 234:
+		if len(values[5]) > 234:
 			description_error = "the description value must contain 234 characters."
 			error_list.append(description_error)
 
@@ -64,7 +59,7 @@ class Manager:
 				try:
 					int(player_id)
 					list_verified_id.append(player_id)
-				except Exception as e:
+				except Exception:
 					type_error = "player_id list must only contain integers."
 					error_list.append(type_error)
 
@@ -76,7 +71,7 @@ class Manager:
 	def check_instances_players(self, id_list, instances):
 		error_list = []
 		for player_id, player_instance in zip(id_list, instances):
-			if player_instance == None:
+			if player_instance is None:
 				player_error = "there is no player with the following id :{0}".format(player_id)
 				error_list.append(player_error)
 
@@ -86,12 +81,10 @@ class Manager:
 			return True, None
 
 	def round_classification(self, instances, first_round=True):
-		winner =[]
-		looser =[]
-		zero =[]
-		match_list = []
-
-		if first_round == True:
+		winner = []
+		looser = []
+		zero = []
+		if first_round is True:
 			instances = sorted(instances, key=lambda k: k['ranking'])
 		else:
 			for match in instances:
@@ -114,8 +107,8 @@ class Manager:
 	def pairing_first_round(self, instances):
 		pairing_list = []
 		nb_players = len(instances)
-		part_one = instances[:nb_players//2]
-		part_two = instances[nb_players//2:]
+		part_one = instances[:nb_players // 2]
+		part_two = instances[nb_players // 2:]
 		for player1, player2 in zip(part_one, part_two):
 			pairing_list.append((player1, player2))
 		return pairing_list
@@ -139,13 +132,12 @@ class Manager:
 				for nb in date:
 					try:
 						int(nb)
-					except Exception as e:
+					except Exception:
 						date_error = "birthday must only contain integers"
 						error_list.append(date_error)
-			except Exception as e:
+			except Exception:
 				date_error = "the date of birth format is incorrect."
-				error_list.append(date_error)		
-
+				error_list.append(date_error)
 		if len(player[3]) != 1:
 			gender_error = "the gender field takes only one character."
 			error_list.append(gender_error)
@@ -155,12 +147,12 @@ class Manager:
 				error_list.append(gender_error)
 
 		try:
-			if int(player[4]) > 0: 
+			if int(player[4]) > 0:
 				player[4] = int(player[4])
 			else:
 				error_ranking = "ranking this is a positive number"
 				error_list.append(error_ranking)
-		except Exception as e:
+		except Exception:
 			ranking_error = "ranking must only contain integers"
 			error_list.append(ranking_error)
 
@@ -174,7 +166,7 @@ class Manager:
 		try:
 			ranking = int(ranking)
 			ranking_int = True
-		except Exception as e:
+		except Exception:
 			ranking_int = False
 			ranking_error = "ranking must only contain integers"
 			error_list.append(ranking_error)
@@ -194,7 +186,7 @@ class Manager:
 		error_list = []
 		try:
 			int(tournament_id)
-		except Exception as e:
+		except Exception:
 			id_error = "tournament_id must only contain integers."
 			error_list.append(id_error)
 		if len(error_list) > 0:
@@ -209,12 +201,12 @@ class Manager:
 			try:
 				value = int(pts)
 				int_validator = "True"
-			except Exception as e:
+			except Exception:
 				int_validator = "False"
 				try:
 					value = float(pts)
 					float_validator = "True"
-				except Exception as e:
+				except Exception:
 					float_validator = "False"
 
 			if int_validator == "True" or float_validator == "True":
@@ -222,12 +214,10 @@ class Manager:
 			else:
 				error_type = "'{0}' value is incorrect, points only accept values of type int and float".format(pts)
 				error_list.append(error_type)
-		
 		if len(error_list) > 0:
 			return False, None, error_list
 		else:
 			return True, new_list_points, None
-
 
 	def check_points_values(self, pts_list):
 		error_list = []
@@ -247,7 +237,7 @@ class Manager:
 		size_list = len(list_points)
 		index1, index2, match = (0, 1, 0)
 		new_list = []
-		while match < size_list/2:
+		while match < size_list / 2:
 			score1 = list_points[index1]
 			score2 = list_points[index2]
 			new_list.append((score1, score2))
@@ -255,34 +245,6 @@ class Manager:
 			index2 += 2
 			match += 1
 		return new_list
-
-	def round_classification(self, instances, first_round=True):
-		winner =[]
-		looser =[]
-		zero =[]
-		match_list = []
-
-		if first_round == True:
-			instances = sorted(instances, key=lambda k: k['ranking'])
-		else:
-			for match in instances:
-				player1, player2 = match['match']
-				if int(player1[1]) > int(player2[1]):
-					winner.append(player1[0])
-					looser.append(player2[0])
-				elif player1[1] == player2[1]:
-					zero.append(player1[0])
-					zero.append(player2[0])
-				else:
-					winner.append(player2[0])
-					looser.append(player1[0])
-			winner = sorted(winner, key=lambda k: k['ranking'])
-			looser = sorted(looser, key=lambda k: k['ranking'])
-			zero = sorted(zero, key=lambda k: k['ranking'])
-			instances = winner + zero + looser
-		return instances
-
-
 
 	def check_pairings(self, dict_1, dict_2, round_list):
 		for key1_name in dict_1:
@@ -319,10 +281,10 @@ class Manager:
 				for nb in date:
 					try:
 						int(nb)
-					except Exception as e:
+					except Exception:
 						date_error = "date must only contain integers"
 						error_list.append(date_error)
-			except Exception as e:
+			except Exception:
 				date_error = "the date format is incorrect."
 				error_list.append(date_error)
 
@@ -332,7 +294,6 @@ class Manager:
 			return True, None
 
 	def new_round_pairing_algo(self, instances_order, tournament_instance):
-		matchs = []
 		dict_1 = {}
 		dict_2 = {}
 		pairing_list = []
@@ -343,7 +304,7 @@ class Manager:
 		for i in range(4):
 			try:
 				name1, name2 = self.check_pairings(self, dict_1, dict_2, tournament_instance['rounds'])
-			except Exception as e:
+			except Exception:
 				name1, name2 = list(dict_1)[-1], list(dict_1)[-2]
 			pairing_list.append((dict_1[name1], dict_2[name2]))
 			del dict_1[name1]
@@ -351,9 +312,3 @@ class Manager:
 			del dict_2[name1]
 			del dict_2[name2]
 		return pairing_list
-
-
-
-
-
-
