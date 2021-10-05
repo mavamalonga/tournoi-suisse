@@ -1,8 +1,8 @@
 from urls import Urls
 
-urls = Urls()
 
-def main(urls):
+def main():
+	urls = Urls()
 	page = urls.page_1()
 	while True:
 		print(end="\n")
@@ -45,7 +45,7 @@ def main(urls):
 				page = urls.page_13()
 			else:
 				page, tournament_id, tournament_instance = urls.page_132t(request)
-				if tournament_id == None:
+				if tournament_id is None:
 					page = urls.page_132()
 		elif page == "132t":
 			if request == "p":
@@ -113,5 +113,6 @@ def main(urls):
 			else:
 				urls.page_404()
 
+
 if __name__ == '__main__':
-	main(urls)
+	main()
