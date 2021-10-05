@@ -130,7 +130,7 @@ class Database:
 		matchs = []
 
 		for match, score in zip(latest_round['matchs'], list_points):
-			instance1, = match['match'][0][0]
+			instance1 = match['match'][0][0]
 			instance2 = match['match'][1][0]
 			score_player1, score_player2 = score
 			match['match'][0][1] = score_player1
