@@ -71,17 +71,17 @@ class Database:
 				round_instances.append(round_instance)
 		return round_instances
 
-	def select_from_player_table(self, get_id=None, get_instance=None, where_id=None, order_by_name=None):
+	def select_from_player_table(self, get_id=None, get_instance=None, where_id=None, order=None):
 		"""toutes les requêtes select sur la table player"""
 		instances = self.player_table.all()
 
-		if get_id is True and get_instance is True and order_by_name is None:
+		if get_id is True and get_instance is True and order is None:
 			id_list = []
 			for player in instances:
 				id_list.append(player.doc_id)
 			return id_list, instances
-		elif get_instance is True and order_by_name is not None:
-			if order_by_name == "name":
+		elif get_instance is True and order is not None:
+			if order == "name":
 				instances = sorted(instances, key=lambda k: k['name'])
 			else:
 				instances = sorted(instances, key=lambda k: k['ranking'])
@@ -92,8 +92,8 @@ class Database:
 				player_instance = self.player_table.get(doc_id=int(player_id))
 				instances.append(player_instance)
 			return instances
-		elif get_instance is True and where_id is not None and order_by_name is not None:
-			if order_by_name == "name":
+		elif get_instance is True and where_id is not None and order is not None:
+			if order == "name":
 				instances = sorted(instances, key=lambda k: k['name'])
 			else:
 				instances = sorted(instances, key=lambda k: k['ranking'])

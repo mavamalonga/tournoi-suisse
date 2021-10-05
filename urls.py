@@ -17,16 +17,16 @@ class Urls(View, Database, Manager):
 
 	def page_11(self):
 		page = "1"
-		tournament = View.form_add_tournament(self)
-		validator_1, errors_1 = Manager.check_form_add_tournament(self, tournament)
+		data = View.form_add_tournament(self)
+		validator_1, errors_1 = Manager.check_form_add_tournament(self, data)
 		if validator_1 is True:
 			id_list, instances = Database.select_from_player_table(self, get_id=True, get_instance=True)
-			selection_of_players = View.tournament_add_players(self, id_list, instances)
-			selection_of_players = Manager.parse_select_of_players(self, selection_of_players)
-			validator_2, errors_2 = Manager.check_selection_of_players(self, selection_of_players)
+			selection = View.tournament_add_players(self, id_list, instances)
+			selection = Manager.parse_select_of_players(self, selection)
+			validator_2, errors_2 = Manager.check_selection_of_players(self, selection)
 			if validator_2:
-				instances = Database.select_from_player_table(self, get_instance=True, where_id=selection_of_players)
-				validator_3, errors_3 = Manager.check_instances_players(self, selection_of_players, instances)
+				instances = Database.select_from_player_table(self, get_instance=True, where_id=selection)
+				validator_3, errors_3 = Manager.check_instances_players(self, selection, instances)
 				if validator_3:
 					instances = Manager.round_classification(self, instances, first_round=True)
 					pairing = Manager.pairing_first_round(self, instances)
@@ -38,7 +38,7 @@ class Urls(View, Database, Manager):
 					instance = Database.select_from_match_table(self, get_instance=True, where_id=matchs)
 					round_id = Database.add_round(self, instance)
 					round_i = Database.select_from_round_table(self, get_instance=True, where_id=round_id)
-					Database.add_tournament(self, tournament[0], tournament[1], tournament[2], tournament[3], round_i[0], selection_of_players, tournament[4], tournament[5])
+					Database.add_tournament(self, data[0], data[1], data[2], data[3], round_i[0], selection, data[4], data[5])
 				else:
 					View.error(self, errors_3)
 			else:
@@ -65,13 +65,13 @@ class Urls(View, Database, Manager):
 
 	def page_131_name(self):
 		page = "131"
-		players = Database.select_from_player_table(self, get_instance=True, order_by_name="name")
+		players = Database.select_from_player_table(self, get_instance=True, order="name")
 		View.display_list_players(self, players, page_1=True, order_by_name="name")
 		return page
 
 	def page_131_ranking(self):
 		page = "131"
-		players = Database.select_from_player_table(self, get_instance=True, order_by_name="ranking")
+		players = Database.select_from_player_table(self, get_instance=True, order="ranking")
 		View.display_list_players(self, players, page_1=True, order_by_name="ranking")
 		return page
 
@@ -98,15 +98,15 @@ class Urls(View, Database, Manager):
 			View.error(self, errors)
 			return page, None, None
 
-	def page_132t1_name(self, tournament):
+	def page_132t1_name(self, data):
 		page = "132t1"
-		players = Database.select_from_player_table(self, get_instance=True, where_id=tournament['players'], order_by_name="name")
+		players = Database.select_from_player_table(self, get_instance=True, where_id=data['players'], order="name")
 		View.display_list_players(self, players, page_1=False, order_by_name="name")
 		return page
 
-	def page_132t1_ranking(self, tournament_instance):
+	def page_132t1_ranking(self, data):
 		page = "132t1"
-		players = Database.select_from_player_table(self, get_instance=True, where_id=tournament_instance['players'], order_by_name="ranking")
+		players = Database.select_from_player_table(self, get_instance=True, where_id=data['players'], order="ranking")
 		View.display_list_players(self, players, page_1=False, order_by_name="ranking")
 		return page
 
