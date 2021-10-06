@@ -15,7 +15,7 @@ class Database:
         tournament = {
             "name": tournament_values[0],
             "place": tournament_values[1],
-            "date": tournament_values[2],
+            "date": [tournament_values[2]],
             "number_of_turns": tournament_values[3],
             "rounds": [tournament_values[4]],
             "players": tournament_values[5],
