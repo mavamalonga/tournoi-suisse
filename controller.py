@@ -1,4 +1,4 @@
-class Manager:
+class Controller:
 
     def check_form_add_tournament(self, values):
         error_list = []
